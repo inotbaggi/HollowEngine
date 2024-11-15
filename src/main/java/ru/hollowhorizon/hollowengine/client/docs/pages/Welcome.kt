@@ -11,44 +11,9 @@ import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.text
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.titleImg
 import ru.hollowhorizon.hollowengine.client.docs.TableType
 
-const val a = "1_he.0_welcome"
+const val a = "0_welcome"
 
 @DocsPage(a)
 fun DocsRenderer.heWelcome() {
-  text("${a}.text0", 50)
-
-  ImGui.newLine()
-  ImGui.newLine()
-
-  titleImg("welcome", arrayOf(1387f, 895f), 0.55f)
-
-  dline()
-
-  text("${a}.text1")
-  ImGui.newLine()
-  text("${a}.text2")
-
-  dline()
-
-  table("${a}.table0", TableType.WARN) {
-    text("${a}.table0.text0")
-    ImGui.newLine()
-    ImGui.newLine()
-    button("${a}.table0.text1", true) { Util.getPlatform().openUri("https://kotlinlang.org/docs/home.html") }
-    ImGui.newLine()
-    ImGui.newLine()
-    text("${a}.table0.text2")
-  }
-
-  dline()
-
-  table("${a}.table1", TableType.ERR) {
-    text("${a}.table1.text0")
-    ImGui.newLine()
-    text("${a}.table1.text1")
-
-    dline()
-
-    text("${a}.table1.text2")
-  }
+  text("Добро пожаловать", 90)
 }
