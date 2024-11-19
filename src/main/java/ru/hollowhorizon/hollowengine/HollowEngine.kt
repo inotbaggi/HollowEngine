@@ -41,9 +41,15 @@ object HollowEngine {
 class EngineConfig : HollowConfig() {
     @SerialName("ide_config")
     var ideConfig = IDEConfig()
+    @SerialName("docs_config")
+    var docsConfig = DocsConfig()
 
     @Serializable
     class IDEConfig {
         var tabSpace = 4
+    }
+    @Serializable
+    class DocsConfig {
+        var debugMode = false
     }
 }

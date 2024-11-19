@@ -90,7 +90,8 @@ fun registerNpcOptions(event: NpcOptionsEvent) {
         TradeMenuGui(event.npc, true).open()
     })
     event.register(NpcOption("quests") {
-        QuestsGraphGui(event.npc).open()
+        //QuestsGraphGui(event.npc).open()
+        Minecraft.getInstance().player?.sendToast("Временно отключено.".literal)
     })
 }
 

@@ -9,46 +9,35 @@ import net.minecraft.Util
 import ru.hollowhorizon.hc.client.imgui.Graphics
 import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.client.utils.toTexture
-import ru.hollowhorizon.hc.common.config.HollowConfig
 import ru.hollowhorizon.hollowengine.EngineConfig
+import ru.hollowhorizon.hollowengine.HollowEngine.MODID
 import ru.hollowhorizon.hollowengine.client.gui.scripting.KotlinLanguage
+import java.net.URL
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
+import kotlin.properties.Delegates
 
 /**
- * Утилиты специально для документации
+ * Утилиты для документации
  */
 object DocsUtils {
   private val docsLang = DocsLanguage.getInstance()
 
-  fun text(textId: String, fontSize: Int = 30, center: Boolean = true, shadow: Boolean = false) {
-    Graphics.withFontSize(fontSize) {
-      val contextWidth = ImGui.getContentRegionAvailX()
-      val text =
-        if (docsLang.has(textId)) docsLang.getOrDefault(textId)
-        else textId
+  val EDITOR = TextEditor().apply {
+    setLanguageDefinition(KotlinLanguage)
 
-      val textWidth = ImGui.calcTextSize(text, true, contextWidth).x
-
-      if (center) ImGui.sameLine(contextWidth / 2 - textWidth / 2)
-      if (shadow) textShadow(text) else ImGui.textWrapped(text)
-    }
+    tabSize = EngineConfig.IDEConfig().tabSpace
+    text = ""
+    isReadOnly = true
   }
-
-  fun openDir(dir: String) {
-    val directory = Path(dir)
-
-    if (!directory.exists()) directory.createDirectory()
-
-    //? if >=1.21 {
-    /*Util.getPlatform().openPath(directory)
-    *///?} else {
-    Util.getPlatform().openFile(directory.toFile())
-    //?}
-  }
-
-  fun code(id: String, lang: String = "kts", title: String, code: () -> String) {
+  fun code(
+    id: String,
+    lang: String = "kts",
+    title: String,
+    code: () -> String
+  ) {
     val text = code()
 
     val codeBlockSize = ImGui.calcTextSize(text)
@@ -70,12 +59,178 @@ object DocsUtils {
     ImGui.endChild()
     ImGui.popStyleColor(4)
   }
-}
 
-val EDITOR = TextEditor().apply {
-  setLanguageDefinition(KotlinLanguage)
+  enum class TextAlign {
+    LEFT,
+    CENTER,
+    RIGHT
+  }
+  fun text(textId: String, fontSize: Int = 30, textAlign: TextAlign = TextAlign.CENTER) {
+    Graphics.withFontSize(fontSize) {
+      val contextWidth = ImGui.getContentRegionAvailX()
+      val text =
+        if (docsLang.has(textId)) docsLang.getOrDefault(textId)
+        else textId
 
-  tabSize = EngineConfig.IDEConfig().tabSpace
-  text = ""
-  isReadOnly = true
+      val textWidth = ImGui.calcTextSizeX(text, true, contextWidth)
+
+      when(textAlign) {
+        TextAlign.LEFT -> ImGui.setCursorPosX(8f)
+        TextAlign.CENTER -> ImGui.setCursorPosX((contextWidth - textWidth) / 2)
+        TextAlign.RIGHT -> ImGui.setCursorPosX(contextWidth - textWidth)
+      }
+      DocsUtils.textShadow(text)
+    }
+  }
+  fun textShadow(text: String) {
+    val cursor = ImGui.getCursorPos()
+    ImGui.setCursorPos(cursor.x + 2.5f, cursor.y + 2.5f)
+    val color = ImGui.getStyle().getColor(ImGuiCol.Text)
+    ImGui.pushStyleColor(ImGuiCol.Text, color.x * 0.5f, color.y * 0.5f, color.z * 0.5f, color.w * 0.5f)
+    ImGui.textWrapped(text)
+    ImGui.popStyleColor()
+    ImGui.setCursorPos(cursor.x, cursor.y)
+    ImGui.textWrapped(text)
+  }
+
+  enum class TableType(val rgbBorder: Array<Int>, val rgbBackground: Array<Int>) {
+    NOTE(arrayOf(191, 191, 191), arrayOf(107, 107, 107)),
+    TIP(arrayOf(58, 186, 54), arrayOf(28, 97, 26)),
+    INFO(arrayOf(78, 165, 199), arrayOf(43, 93, 112)),
+    WARN(arrayOf(207, 145, 45), arrayOf(117, 82, 25)),
+    ERROR(arrayOf(209, 42, 42), arrayOf(135, 26, 26))
+  }
+  fun table(
+    headText: String,
+    tableType: TableType,
+    tableSizeY: Float = 256f,
+    body: () -> Any
+  ) {
+    val sizeX = ImGui.getWindowSizeX() * 0.9f / 2 - ImGui.getWindowSizeX() / 2
+    val iconTypes = arrayOf(
+      arrayOf(0f, 0f, 0.25f, 0.5f), // note
+      arrayOf(0.25f, 0f, 0.5f, 0.5f), // tip
+      arrayOf(0.5f, 0f, 0.75f, 0.5f), // info
+      arrayOf(0.75f, 0f, 1f, 0.5f), // warn
+      arrayOf(0f, 0.5f, 0.25f, 1f) // error
+    )
+    val iconSelected =
+      when(tableType) {
+        TableType.NOTE -> iconTypes[0]
+        TableType.TIP -> iconTypes[1]
+        TableType.INFO -> iconTypes[2]
+        TableType.WARN -> iconTypes[3]
+        TableType.ERROR -> iconTypes[4]
+      }
+
+    ImGui.pushStyleVar(ImGuiStyleVar.ChildRounding, 16f)
+    ImGui.pushStyleVar(ImGuiStyleVar.ChildBorderSize, 8f)
+    ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 8f, 8f)
+    ImGui.pushStyleColor(ImGuiCol.ChildBg, tableType.rgbBackground[0], tableType.rgbBackground[1], tableType.rgbBackground[2], 255)
+    ImGui.pushStyleColor(ImGuiCol.Border, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
+    ImGui.pushStyleColor(ImGuiCol.ScrollbarBg, 0, 0, 0, 0)
+    ImGui.pushStyleColor(ImGuiCol.ScrollbarGrab, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
+    ImGui.pushStyleColor(ImGuiCol.ScrollbarGrabActive, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
+    ImGui.pushStyleColor(ImGuiCol.ScrollbarGrabHovered, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
+    ImGui.setCursorPosX(ImGui.getWindowSizeX() / 2f - (ImGui.getWindowSizeX() * 0.9f) / 2f)
+    ImGui.beginChild("table-$headText", sizeX, tableSizeY, true, ImGuiWindowFlags.AlwaysAutoResize)
+    ImGui.setWindowSize(sizeX, tableSizeY)
+
+    ImGui.setCursorPos(8f, 8f)
+    ImGui.image(
+      "$MODID:docs/icons/table_icons.png".rl.toTexture().id.toLong(),
+      64f, 64f,
+      iconSelected[0], iconSelected[1], iconSelected[2], iconSelected[3],
+      tableType.rgbBorder[0] / 255f, tableType.rgbBorder[1] / 255f, tableType.rgbBorder[2] / 255f, 1f
+    )
+    ImGui.setCursorPosY(32f)
+    text(headText, 40)
+    ImGui.sameLine()
+    ImGui.setCursorPos(ImGui.getWindowSizeX() - 64f - 32f, 8f)
+    ImGui.image(
+      "$MODID:docs/icons/table_icons.png".rl.toTexture().id.toLong(),
+      64f, 64f,
+      iconSelected[0], iconSelected[1], iconSelected[2], iconSelected[3],
+      tableType.rgbBorder[0] / 255f, tableType.rgbBorder[1] / 255f, tableType.rgbBorder[2] / 255f, 1f
+    )
+    ImGui.newLine()
+    ImGui.separator()
+    ImGui.newLine()
+    body()
+    ImGui.newLine()
+
+    ImGui.endChild()
+    ImGui.popStyleColor(6)
+    ImGui.popStyleVar(3)
+  }
+
+  enum class ButtonType(val r: Int, val g: Int, val b: Int) {
+    BASIC(92, 92, 92),
+    IMAGE(255, 255, 255),
+    LINK(50, 103, 184),
+    DIR(179, 138, 36)
+  }
+  fun button(
+    label: String,
+    lore: String = "",
+    width: Float = 128f,
+    height: Float = 64f,
+    imagePath: String = "",
+    buttonType: ButtonType = ButtonType.BASIC,
+    action: () -> Any
+  ) {
+    ImGui.pushID("button-$label")
+    ImGui.pushStyleVar(ImGuiStyleVar.FrameRounding, 8f)
+    ImGui.pushStyleColor(ImGuiCol.Button, buttonType.r, buttonType.g, buttonType.b, 255)
+    ImGui.pushStyleColor(ImGuiCol.ButtonHovered, buttonType.r, buttonType.g, buttonType.b, 255)
+    ImGui.pushStyleColor(ImGuiCol.ButtonActive, buttonType.r, buttonType.g, buttonType.b, 255)
+
+    var button by Delegates.notNull<Boolean>()
+
+    if(imagePath != "" && buttonType == ButtonType.IMAGE)
+      button = ImGui.imageButton(imagePath.rl.toTexture().id.toLong(), width, height)
+    else
+    button = ImGui.button(label, width, height)
+    
+    if(button) action()
+    if(ImGui.isItemHovered() && lore != "") ImGui.setTooltip(lore)
+
+    ImGui.popStyleColor(3)
+    ImGui.popStyleVar()
+    ImGui.popID()
+  }
+  fun openDir(dir: String) {
+    val directory = Path(dir)
+
+    if (!directory.exists()) directory.createDirectory()
+
+    //? if >=1.21 {
+    /*Util.getPlatform().openPath(directory)
+    *///?} else {
+    Util.getPlatform().openFile(directory.toFile())
+    //?}
+  }
+  fun openUrl(url: String) {
+    //? if >=1.21 {
+    /*Util.getPlatform().openUrl(URL(url))
+    *///?} else {
+    Util.getPlatform().openUrl(URL(url))
+    //?}
+  }
+
+  /**
+    * @HollowHorizon Нужна такая же 3D сцена как в "Create".
+   * т.е. чтобы можно было посмотреть как будет выглядеть работа скрипта (виртуально)
+   * Например будет как:
+   * preview3DScript {
+   *   val vitalik = NPCEntity.creating {
+   *     name = "Виталик"
+   *     pos = pos(0, 0, 0)
+   *   }
+   *   vitalik move pos(9, vitalik.position.y, 3)
+   * }
+   */
+  fun preview3DScript(script: () -> Unit) {
+    // function body
+  }
 }

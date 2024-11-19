@@ -7,6 +7,7 @@ import imgui.flag.ImGuiTreeNodeFlags
 import ru.hollowhorizon.hc.client.imgui.DockingHelper
 import ru.hollowhorizon.hc.client.imgui.FontAwesomeIcons
 import ru.hollowhorizon.hc.client.imgui.Graphics
+import ru.hollowhorizon.hollowengine.HollowEngine
 import ru.hollowhorizon.hollowengine.client.gui.ImGuiScreen
 
 class DocsRenderer : ImGuiScreen() {
@@ -80,27 +81,35 @@ data class DocTreeNode(val name: String, val path: String, val children: Mutable
     }
 }
 
-
 fun convertListToTree(paths: Map<String, PageRenderer>): DocTreeNode {
     val root = DocTreeNode("root", "root")
+
     for (path in paths.keys) {
+        // Пропускаем "test_page", если debugMode выключен
+        if (path == "test_page" && !HollowEngine.config.docsConfig.debugMode) {
+            continue
+        }
+
         var currentNode = root
         val parts = path.split(".")
+
         for (part in parts) {
             val existingNode = currentNode.children.find { it.name == part }
             if (existingNode != null) {
                 currentNode = existingNode
-                currentNode.renderer = paths[path]
             } else {
                 val newNode = DocTreeNode(part, path)
-                if (part == parts.last()) {
-                    newNode.renderer = paths[path]
-                }
                 currentNode.children.add(newNode)
                 currentNode = newNode
             }
+
+            // Устанавливаем renderer только для последнего элемента пути
+            if (part == parts.last()) {
+                currentNode.renderer = paths[path]
+            }
         }
     }
+
     root.sort()
     return root
 }

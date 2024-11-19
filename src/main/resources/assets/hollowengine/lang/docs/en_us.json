@@ -1,3 +1,11 @@
 {
+  "button.tree_show": "Show",
+  "button.tree_hide": "Hide",
 
+  "-1_test_page": "Test page",
+
+  "0_welcome": "Welcome",
+
+  "begin": "Begin",
+  "begin.new_directory": "New folder"
 }
