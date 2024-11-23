@@ -168,7 +168,7 @@ fun DocsRenderer.newDirectory() {
           icon3DModel.apply {
             tickCount = ticks
             val cap = this[AnimatedEntityCapability::class.java]
-            cap.textures["docs/icons/dir/3d_icon_model/unnamed_texture_0"] = "$MODID:docs/icons/dirs/assets.png"
+            cap.textures["docs/icons/dirs/3d_icon_model/unnamed_texture_0"] = "$MODID:docs/icons/dirs/assets.png"
             cap.animations[AnimationType.IDLE] = "idle"
           }
         }
@@ -300,9 +300,87 @@ fun DocsRenderer.newDirectory() {
         }
         5 -> {
           // SCRIPTS DIRECTORY //
+          text("В ней хранятся все скрипты, которые вы создали.")
+          ImGui.newLine()
+          text("По умолчанию её нет, так что вам нужно создать её самостоятельно.")
+
+          ImGui.newLine()
+          ImGui.separator()
+          ImGui.newLine()
+
+          ImGui.setCursorPosX(ImGui.getWindowSizeX() / 2f - 512f / 2f)
+          button(
+            "Открыть папку \"scripts\"",
+            "Открывает папку `scripts` в директории мода. На случай если она отсутствует - создаёт её",
+            512f,
+            buttonType = DocsUtils.ButtonType.DIR
+          ) {
+            DocsUtils.openDir(DirectoryManager.HOLLOW_ENGINE.resolve("scripts").pathString)
+          }
+          ImGui.setCursorPos(ImGui.getWindowSizeX() / 2f - (512f + 128f) / 2f, -8f)
+          Graphics.entity(
+            icon3DModel,
+            128f, 128f,
+            red = 224f, green = 168f, blue = 36f,
+            rotation = false,
+            offsetY = 8f
+          )
+          ImGui.setCursorPos((ImGui.getWindowSizeX() / 2f - (512f + 128f) / 2f) + 512f - 32f, -8f)
+          Graphics.entity(
+            icon3DModel,
+            128f, 128f,
+            red = 224f, green = 168f, blue = 36f,
+            rotation = false,
+            offsetY = 8f
+          )
+          icon3DModel.apply {
+            tickCount = ticks
+            val cap = this[AnimatedEntityCapability::class.java]
+            cap.textures["docs/icons/dirs/3d_icon_model/unnamed_texture_0"] = "$MODID:docs/icons/dirs/scripts.png"
+            cap.animations[AnimationType.IDLE] = "idle"
+          }
         }
         6 -> {
           // STORYTELLER WORLD DIRECTORY //
+          text("В ней хранятся все скрипты, которые вы создали.")
+          ImGui.newLine()
+          text("Создаётся автоматически.")
+
+          ImGui.newLine()
+          ImGui.separator()
+          ImGui.newLine()
+
+          ImGui.setCursorPosX(ImGui.getWindowSizeX() / 2f - 512f / 2f)
+          button(
+            "Открыть папку \"scripts\"",
+            "Открывает папку `scripts` в директории мода. На случай если она отсутствует - создаёт её",
+            512f,
+            buttonType = DocsUtils.ButtonType.DIR
+          ) {
+            DocsUtils.openDir(DirectoryManager.HOLLOW_ENGINE.resolve("scripts").pathString)
+          }
+          ImGui.setCursorPos(ImGui.getWindowSizeX() / 2f - (512f + 128f) / 2f - 128f, -8f)
+          Graphics.entity(
+            icon3DModel,
+            128f, 128f,
+            red = 224f, green = 168f, blue = 36f,
+            rotation = false,
+            offsetY = 8f
+          )
+          ImGui.setCursorPos((ImGui.getWindowSizeX() / 2f - (512f + 128f) / 2f) + 512f + 128f - 24f, -8f)
+          Graphics.entity(
+            icon3DModel,
+            128f, 128f,
+            red = 224f, green = 168f, blue = 36f,
+            rotation = false,
+            offsetY = 8f
+          )
+          icon3DModel.apply {
+            tickCount = ticks
+            val cap = this[AnimatedEntityCapability::class.java]
+            cap.textures["docs/icons/dirs/3d_icon_model/unnamed_texture_0"] = "$MODID:docs/icons/dirs/storyteller_world.png"
+            cap.animations[AnimationType.IDLE] = "fair"
+          }
         }
         else -> {
           text("Ошибка")
