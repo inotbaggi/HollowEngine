@@ -1,17 +1,26 @@
 package ru.hollowhorizon.hollowengine.client.docs
 
+import com.mojang.authlib.minecraft.client.MinecraftClient
 import imgui.ImGui
 import imgui.extension.texteditor.TextEditor
 import imgui.flag.ImGuiCol
 import imgui.flag.ImGuiStyleVar
 import imgui.flag.ImGuiWindowFlags
 import net.minecraft.Util
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.screens.ChatScreen
+import net.minecraft.world.entity.player.Player
+import org.lwjgl.glfw.GLFW
 import ru.hollowhorizon.hc.client.imgui.Graphics
+import ru.hollowhorizon.hc.client.utils.literal
+import ru.hollowhorizon.hc.client.utils.mc
 import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.client.utils.toTexture
 import ru.hollowhorizon.hollowengine.EngineConfig
 import ru.hollowhorizon.hollowengine.HollowEngine.MODID
 import ru.hollowhorizon.hollowengine.client.gui.scripting.KotlinLanguage
+import ru.hollowhorizon.hollowengine.common.scripting.story.functions.execute
+import ru.hollowhorizon.hollowengine.common.scripting.story.functions.player.send
 import java.net.URL
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -168,7 +177,8 @@ object DocsUtils {
     BASIC(92, 92, 92),
     IMAGE(255, 255, 255),
     LINK(50, 103, 184),
-    DIR(179, 138, 36)
+    DIR(179, 138, 36),
+    ENTER_COMMAND(164, 32, 32)
   }
   fun button(
     label: String,
@@ -190,8 +200,8 @@ object DocsUtils {
     if(imagePath != "" && buttonType == ButtonType.IMAGE)
       button = ImGui.imageButton(imagePath.rl.toTexture().id.toLong(), width, height)
     else
-    button = ImGui.button(label, width, height)
-    
+      button = ImGui.button(label, width, height)
+
     if(button) action()
     if(ImGui.isItemHovered() && lore != "") ImGui.setTooltip(lore)
 
@@ -217,9 +227,10 @@ object DocsUtils {
     Util.getPlatform().openUrl(URL(url))
     //?}
   }
+  fun enterCommand(command: String) = mc.setScreen(ChatScreen(command))
 
   /**
-    * @HollowHorizon Нужна такая же 3D сцена как в "Create".
+   * @HollowHorizon Нужна такая же 3D сцена как в "Create".
    * т.е. чтобы можно было посмотреть как будет выглядеть работа скрипта (виртуально)
    * Например будет как:
    * preview3DScript {

@@ -1,6 +1,7 @@
 package ru.hollowhorizon.hollowengine.client.docs.pages
 
 import imgui.ImGui
+import imgui.type.ImBoolean
 import imgui.type.ImInt
 import imgui.type.ImString
 import ru.hollowhorizon.hollowengine.client.docs.DocsPage
@@ -63,8 +64,9 @@ val tTypes = arrayOf("NOTE", "TIP", "INFO", "WARN", "ERROR")
 val tTypeSelected = ImInt(0)
 var tableTypeSelected = TableType.NOTE
 
-var openedUrl = ImString("https://www.google.com", 512)
-var openedDir = ImString(DirectoryManager.HOLLOW_ENGINE.pathString, 512)
+val openedUrl = ImString("https://www.google.com", 512)
+val openedDir = ImString(DirectoryManager.HOLLOW_ENGINE.pathString, 512)
+val enterCommand = ImString("/hollowengine", 512)
 
 @DocsPage("test_page")
 fun DocsRenderer.testPage() {
@@ -97,23 +99,24 @@ fun DocsRenderer.testPage() {
     "Открывает тестовую ссылку. Ссылку можно изменить ниже",
     312f, 64f,
     buttonType = DocsUtils.ButtonType.LINK
-  ) {
-    DocsUtils.openUrl(openedUrl.get())
-  }
-  ImGui.sameLine()
+  ) { DocsUtils.openUrl(openedUrl.get()) }; ImGui.sameLine()
   DocsUtils.button(
     "Open test directory",
     "Открывает тестовую директорию. Директорию можно изменить ниже",
     460f, 64f,
-    buttonType = DocsUtils.ButtonType.DIR) {
-    DocsUtils.openDir(openedDir.get())
-  }
+    buttonType = DocsUtils.ButtonType.DIR
+  ) { DocsUtils.openDir(openedDir.get()) }; ImGui.sameLine()
+  DocsUtils.button(
+    "Open test command",
+    "Вставляет тестовую команду в чат. Команду можно изменить ниже",
+    312f, 64f,
+    buttonType = DocsUtils.ButtonType.ENTER_COMMAND
+  ) { DocsUtils.enterCommand(enterCommand.get()) }
   ImGui.inputText("Test Url", openedUrl)
   ImGui.inputText("Test Directory", openedDir)
+  ImGui.inputText("Test Command", enterCommand)
 
   ImGui.newLine()
   ImGui.separator()
   ImGui.newLine()
-
-  ImGui.text("3D_ICON_MODEL_TEXTURES: ${icon3DModel.textures.map}")
 }

@@ -4,7 +4,6 @@ import imgui.ImGui
 import imgui.type.ImInt
 import net.minecraft.CrashReport
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.components.toasts.SystemToast
 import ru.hollowhorizon.hc.client.imgui.Graphics
 import ru.hollowhorizon.hc.client.models.internal.Transform
 import ru.hollowhorizon.hc.client.models.internal.animations.AnimationType
@@ -25,7 +24,6 @@ import ru.hollowhorizon.hollowengine.common.files.DirectoryManager
 import ru.hollowhorizon.hollowengine.common.scripting.story.functions.npcs.transform
 import java.lang.RuntimeException
 import kotlin.io.path.pathString
-import kotlin.random.Random
 
 const val begin_newDirectory = "$begin.new_directory"
 
