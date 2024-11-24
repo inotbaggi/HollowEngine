@@ -142,7 +142,7 @@ object DocsUtils {
     ImGui.pushStyleColor(ImGuiCol.ScrollbarGrabActive, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
     ImGui.pushStyleColor(ImGuiCol.ScrollbarGrabHovered, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
     ImGui.setCursorPosX(ImGui.getWindowSizeX() / 2f - (ImGui.getWindowSizeX() * 0.9f) / 2f)
-    ImGui.beginChild("table-$headText", sizeX, tableSizeY, true, ImGuiWindowFlags.AlwaysAutoResize)
+    ImGui.beginChild("##table-$headText", sizeX, tableSizeY, true, ImGuiWindowFlags.AlwaysAutoResize)
     ImGui.setWindowSize(sizeX, tableSizeY)
 
     ImGui.setCursorPos(8f, 8f)
@@ -243,5 +243,19 @@ object DocsUtils {
    */
   fun preview3DScript(script: () -> Unit) {
     // function body
+  }
+
+  fun accentText(text: String) {
+    val textSize = ImGui.calcTextSize(text)
+
+    ImGui.pushStyleVar(ImGuiStyleVar.ChildBorderSize, 4f)
+    ImGui.pushStyleVar(ImGuiStyleVar.ChildRounding, 8f)
+    ImGui.pushStyleColor(ImGuiCol.ChildBg, 64, 64, 64, 255)
+    ImGui.pushStyleColor(ImGuiCol.Border, 128, 128, 128, 255)
+    ImGui.beginChild("##accent_text", textSize.x + 24f, textSize.y + 16f, true)
+    ImGui.textWrapped(text)
+    ImGui.endChild()
+    ImGui.popStyleColor(2)
+    ImGui.popStyleVar(2)
   }
 }

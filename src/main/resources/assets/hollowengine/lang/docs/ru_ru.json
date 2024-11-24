@@ -2,10 +2,12 @@
   "button.tree_show": "Показать",
   "button.tree_hide": "Скрыть",
 
-  "-1_test_page": "Тестовая страница",
+  "test_page": "Тестовая страница",
 
   "0_welcome": "Добро пожаловать",
 
   "begin": "Начало",
-  "begin.new_directory": "Новая папка"
+  "begin.new_directory": "Новая папка",
+  "begin.commands": "/Команды",
+  "begin.scripts_type": "Типы скриптов"
 }

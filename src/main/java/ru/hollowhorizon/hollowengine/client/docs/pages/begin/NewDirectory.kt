@@ -348,11 +348,11 @@ fun DocsRenderer.newDirectory() {
           ImGui.separator()
           ImGui.newLine()
 
-          ImGui.setCursorPosX(ImGui.getWindowSizeX() / 2f - 512f / 2f)
+          ImGui.setCursorPosX(ImGui.getWindowSizeX() / 2f - 512f + 256f / 2f)
           button(
-            "Открыть папку \"scripts\"",
-            "Открывает папку `scripts` в директории мода. На случай если она отсутствует - создаёт её",
-            512f,
+            "Открыть папку \"storyteller_world\"",
+            "Открывает папку `storyteller_world` в директории мода. На случай если она отсутствует - создаёт её",
+            512f + 256f,
             buttonType = DocsUtils.ButtonType.DIR
           ) {
             DocsUtils.openDir(DirectoryManager.HOLLOW_ENGINE.resolve("scripts").pathString)
