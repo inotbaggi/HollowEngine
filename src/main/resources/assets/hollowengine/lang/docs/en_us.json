@@ -9,5 +9,6 @@
   "begin": "Begin",
   "begin.new_directory": "New folder",
   "begin.commands": "/Commands",
-  "begin.scripts_type": "Scripts type"
+  "begin.scripts_type": "Scripts type",
+  "begin.assets": "Assets"
 }

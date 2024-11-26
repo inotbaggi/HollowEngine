@@ -1,16 +1,13 @@
 package ru.hollowhorizon.hollowengine.client.docs.pages.begin
 
-import imgui.ImColor
 import imgui.ImGui
-import imgui.flag.ImGuiTableBgTarget
-import imgui.flag.ImGuiTableColumnFlags
-import imgui.flag.ImGuiTableFlags
 import ru.hollowhorizon.hc.client.imgui.Graphics
 import ru.hollowhorizon.hollowengine.client.docs.DocsPage
 import ru.hollowhorizon.hollowengine.client.docs.DocsRenderer
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.button
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.table
+import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.tablice
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.text
 
 const val begin_commands = "$begin.commands"
@@ -35,121 +32,48 @@ fun DocsRenderer.commands() {
 
   table("Описание к командам", DocsUtils.TableType.TIP, tableSizeY = 512f + 256f) {
     Graphics.withFontSize(24) {
-      if (ImGui.beginTable("Описание к командам", 5, ImGuiTableFlags.Borders)) {
-        // HEAD //
-        ImGui.tableSetupColumn("Команда")
-        ImGui.tableSetupColumn("Аргументы", ImGuiTableColumnFlags.WidthFixed, 256f + 64f)
-        ImGui.tableSetupColumn("Описание", ImGuiTableColumnFlags.WidthFixed, 512f)
-        ImGui.tableSetupColumn("Опробовать")
-        ImGui.tableHeadersRow()
-
-        // POS //
-        ImGui.tableNextRow()
-        ImGui.tableSetColumnIndex(0)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("/hollowengine pos")
-        ImGui.tableSetColumnIndex(1)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("Отсутствуют")
-        ImGui.tableSetColumnIndex(2)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.textWrapped("Получает точку позиции, куда вы смотрите и копирует эту позицию.")
-        ImGui.tableSetColumnIndex(3)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        button("Вставить", width = 128f) { DocsUtils.enterCommand("/hollowengine pos") }
-
-        // HAND //
-        ImGui.tableNextRow()
-        ImGui.tableSetColumnIndex(0)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("/hollowengine hand")
-        ImGui.tableSetColumnIndex(1)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("Отсутствуют")
-        ImGui.tableSetColumnIndex(2)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.textWrapped("Копирует данные предмета (item_id, count и nbt_tags) который находится в главной руке.")
-        ImGui.tableSetColumnIndex(3)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        button("Вставить", width = 128f) { DocsUtils.enterCommand("/hollowengine hand") }
-
-        // MODEL //
-        ImGui.tableNextRow()
-        ImGui.tableSetColumnIndex(0)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("/hollowengine model")
-        ImGui.tableSetColumnIndex(1)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("path: ResourceLocation")
-        ImGui.tableSetColumnIndex(2)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.textWrapped("Выводит информацию о модели (список анимаций и текстур) в чат. В качестве аргумента команды нужно указать путь до модели.")
-        ImGui.tableSetColumnIndex(3)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        button("Вставить", width = 128f) { DocsUtils.enterCommand("/hollowengine model ") }
-
-        // START-SCRIPT //
-        ImGui.tableNextRow()
-        ImGui.tableSetColumnIndex(0)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("/hollowengine start-script")
-        ImGui.tableSetColumnIndex(1)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("path: ScriptPath")
-        ImGui.tableSetColumnIndex(2)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.textWrapped("Запускает скрипт по указанному пути в аргументе.")
-        ImGui.tableSetColumnIndex(3)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        button("Вставить", width = 128f) { DocsUtils.enterCommand("/hollowengine start-script ") }
-
-        // OPEN-GUI //
-        ImGui.tableNextRow()
-        ImGui.tableSetColumnIndex(0)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("/hollowengine open-gui")
-        ImGui.tableSetColumnIndex(1)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("path: ScriptPath")
-        ImGui.tableSetColumnIndex(2)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.textWrapped("Запускает скрипт интерфейса по указанному пути в аргументе.")
-        ImGui.tableSetColumnIndex(3)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        button("Вставить", width = 128f) { DocsUtils.enterCommand("/hollowengine open-gui ") }
-
-        // ACTIVE-EVENTS //
-        ImGui.tableNextRow()
-        ImGui.tableSetColumnIndex(0)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("/hollowengine active-events")
-        ImGui.tableSetColumnIndex(1)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("Отсутствуют")
-        ImGui.tableSetColumnIndex(2)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.textWrapped("Отображает активные в данный момент скрипты.")
-        ImGui.tableSetColumnIndex(3)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        button("Вставить", width = 128f) { DocsUtils.enterCommand("/hollowengine active-events") }
-
-        // DIALOGUE //
-        ImGui.tableNextRow()
-        ImGui.tableSetColumnIndex(0)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("/hollowengine dialogue")
-        ImGui.tableSetColumnIndex(1)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.text("?")
-        ImGui.tableSetColumnIndex(2)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        ImGui.textWrapped("information_not_found")
-        ImGui.tableSetColumnIndex(3)
-        ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
-        button("Вставить", width = 128f) { DocsUtils.enterCommand("/hollowengine dialogue") }
-
-        ImGui.endTable()
-      }
+      tablice(
+        "command-list",
+        arrayOf(
+          arrayOf("Команда", "Аргументы", "Описание"),
+          arrayOf(
+            "/hollowengine pos",
+            "Отсутствуют",
+            "Получает точку позиции, куда вы смотрите и копирует координаты этой точки к вам в буфер обмена.",
+          ),
+          arrayOf(
+            "/hollowengine hand",
+            "Отсутствуют",
+            "Копирует данные предмета (такие как `item_id`, `cound` и `nbt_tags`) и копирует их в буфер обмена.",
+          ),
+          arrayOf(
+            "/hollowengine active-events",
+            "Отсутствуют",
+            "Выводит в чат список активных скриптов."
+          ),
+          arrayOf(
+            "/hollowengine model",
+            "path: ResourceLocation",
+            "Выводит в чат информацию о модели, а именно: Список анимаций и Список текстур."
+          ),
+          arrayOf(
+            "/hollowengine start-script",
+            "path: ScriptPath",
+            "Запускает скрипт по указанному в аргументе пути."
+          ),
+          arrayOf(
+            "/hollowengine open-gui",
+            "path: ScriptPath",
+            "Открывает скрипт для интерфейса по указанному в аргументе пути."
+          ),
+          arrayOf(
+            "unknown",
+            "unknown",
+            "unknown"
+          )
+        ),
+        arrayOf(null, null, null)
+      )
     }
   }
 }

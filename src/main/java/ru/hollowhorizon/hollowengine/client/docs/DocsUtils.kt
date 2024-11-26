@@ -1,28 +1,19 @@
 package ru.hollowhorizon.hollowengine.client.docs
 
-import com.mojang.authlib.minecraft.client.MinecraftClient
+import imgui.ImColor
 import imgui.ImGui
 import imgui.extension.texteditor.TextEditor
-import imgui.flag.ImGuiCol
-import imgui.flag.ImGuiStyleVar
-import imgui.flag.ImGuiWindowFlags
+import imgui.flag.*
 import net.minecraft.Util
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.ChatScreen
-import net.minecraft.world.entity.player.Player
-import org.lwjgl.glfw.GLFW
 import ru.hollowhorizon.hc.client.imgui.Graphics
-import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mc
 import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.client.utils.toTexture
 import ru.hollowhorizon.hollowengine.EngineConfig
 import ru.hollowhorizon.hollowengine.HollowEngine.MODID
 import ru.hollowhorizon.hollowengine.client.gui.scripting.KotlinLanguage
-import ru.hollowhorizon.hollowengine.common.scripting.story.functions.execute
-import ru.hollowhorizon.hollowengine.common.scripting.story.functions.player.send
 import java.net.URL
-import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
@@ -41,6 +32,7 @@ object DocsUtils {
     text = ""
     isReadOnly = true
   }
+
   fun code(
     id: String,
     lang: String = "kts",
@@ -74,6 +66,7 @@ object DocsUtils {
     CENTER,
     RIGHT
   }
+
   fun text(textId: String, fontSize: Int = 30, textAlign: TextAlign = TextAlign.CENTER) {
     Graphics.withFontSize(fontSize) {
       val contextWidth = ImGui.getContentRegionAvailX()
@@ -83,7 +76,7 @@ object DocsUtils {
 
       val textWidth = ImGui.calcTextSizeX(text, true, contextWidth)
 
-      when(textAlign) {
+      when (textAlign) {
         TextAlign.LEFT -> ImGui.setCursorPosX(8f)
         TextAlign.CENTER -> ImGui.setCursorPosX((contextWidth - textWidth) / 2)
         TextAlign.RIGHT -> ImGui.setCursorPosX(contextWidth - textWidth)
@@ -91,6 +84,7 @@ object DocsUtils {
       DocsUtils.textShadow(text)
     }
   }
+
   fun textShadow(text: String) {
     val cursor = ImGui.getCursorPos()
     ImGui.setCursorPos(cursor.x + 2.5f, cursor.y + 2.5f)
@@ -109,6 +103,7 @@ object DocsUtils {
     WARN(arrayOf(207, 145, 45), arrayOf(117, 82, 25)),
     ERROR(arrayOf(209, 42, 42), arrayOf(135, 26, 26))
   }
+
   fun table(
     headText: String,
     tableType: TableType,
@@ -124,7 +119,7 @@ object DocsUtils {
       arrayOf(0f, 0.5f, 0.25f, 1f) // error
     )
     val iconSelected =
-      when(tableType) {
+      when (tableType) {
         TableType.NOTE -> iconTypes[0]
         TableType.TIP -> iconTypes[1]
         TableType.INFO -> iconTypes[2]
@@ -135,12 +130,36 @@ object DocsUtils {
     ImGui.pushStyleVar(ImGuiStyleVar.ChildRounding, 16f)
     ImGui.pushStyleVar(ImGuiStyleVar.ChildBorderSize, 8f)
     ImGui.pushStyleVar(ImGuiStyleVar.WindowPadding, 8f, 8f)
-    ImGui.pushStyleColor(ImGuiCol.ChildBg, tableType.rgbBackground[0], tableType.rgbBackground[1], tableType.rgbBackground[2], 255)
+    ImGui.pushStyleColor(
+      ImGuiCol.ChildBg,
+      tableType.rgbBackground[0],
+      tableType.rgbBackground[1],
+      tableType.rgbBackground[2],
+      255
+    )
     ImGui.pushStyleColor(ImGuiCol.Border, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
     ImGui.pushStyleColor(ImGuiCol.ScrollbarBg, 0, 0, 0, 0)
-    ImGui.pushStyleColor(ImGuiCol.ScrollbarGrab, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
-    ImGui.pushStyleColor(ImGuiCol.ScrollbarGrabActive, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
-    ImGui.pushStyleColor(ImGuiCol.ScrollbarGrabHovered, tableType.rgbBorder[0], tableType.rgbBorder[1], tableType.rgbBorder[2], 255)
+    ImGui.pushStyleColor(
+      ImGuiCol.ScrollbarGrab,
+      tableType.rgbBorder[0],
+      tableType.rgbBorder[1],
+      tableType.rgbBorder[2],
+      255
+    )
+    ImGui.pushStyleColor(
+      ImGuiCol.ScrollbarGrabActive,
+      tableType.rgbBorder[0],
+      tableType.rgbBorder[1],
+      tableType.rgbBorder[2],
+      255
+    )
+    ImGui.pushStyleColor(
+      ImGuiCol.ScrollbarGrabHovered,
+      tableType.rgbBorder[0],
+      tableType.rgbBorder[1],
+      tableType.rgbBorder[2],
+      255
+    )
     ImGui.setCursorPosX(ImGui.getWindowSizeX() / 2f - (ImGui.getWindowSizeX() * 0.9f) / 2f)
     ImGui.beginChild("##table-$headText", sizeX, tableSizeY, true, ImGuiWindowFlags.AlwaysAutoResize)
     ImGui.setWindowSize(sizeX, tableSizeY)
@@ -180,6 +199,7 @@ object DocsUtils {
     DIR(179, 138, 36),
     ENTER_COMMAND(164, 32, 32)
   }
+
   fun button(
     label: String,
     lore: String = "",
@@ -197,18 +217,19 @@ object DocsUtils {
 
     var button by Delegates.notNull<Boolean>()
 
-    if(imagePath != "" && buttonType == ButtonType.IMAGE)
+    if (imagePath != "" && buttonType == ButtonType.IMAGE)
       button = ImGui.imageButton(imagePath.rl.toTexture().id.toLong(), width, height)
     else
       button = ImGui.button(label, width, height)
 
-    if(button) action()
-    if(ImGui.isItemHovered() && lore != "") ImGui.setTooltip(lore)
+    if (button) action()
+    if (ImGui.isItemHovered() && lore != "") ImGui.setTooltip(lore)
 
     ImGui.popStyleColor(3)
     ImGui.popStyleVar()
     ImGui.popID()
   }
+
   fun openDir(dir: String) {
     val directory = Path(dir)
 
@@ -220,6 +241,7 @@ object DocsUtils {
     Util.getPlatform().openFile(directory.toFile())
     //?}
   }
+
   fun openUrl(url: String) {
     //? if >=1.21 {
     /*Util.getPlatform().openUrl(URL(url))
@@ -227,6 +249,7 @@ object DocsUtils {
     Util.getPlatform().openUrl(URL(url))
     //?}
   }
+
   fun enterCommand(command: String) = mc.setScreen(ChatScreen(command))
 
   /**
@@ -257,5 +280,39 @@ object DocsUtils {
     ImGui.endChild()
     ImGui.popStyleColor(2)
     ImGui.popStyleVar(2)
+  }
+  fun tablice(tableID: String = "table", body: Array<Array<String>>, columnWidth: Array<Float?>? = null) {
+    val columnCount = body[0].size
+    val rowCount = body.size
+
+    ImGui.beginChild("tableID=$tableID", columnCount * 417.5f, 72.5f * rowCount, false, ImGuiWindowFlags.HorizontalScrollbar)
+    if (ImGui.beginTable(tableID, columnCount, ImGuiTableFlags.Borders or ImGuiTableFlags.RowBg)) {
+      // HEADERS //
+      for (i in 0 until columnCount) {
+        val width = columnWidth?.getOrNull(i)
+        if (width != null) {
+          ImGui.tableSetupColumn(" ${body[0][i]} ", ImGuiTableColumnFlags.WidthFixed, width)
+        } else {
+          ImGui.tableSetupColumn(" ${body[0][i]} ")
+        }
+      }
+      ImGui.tableHeadersRow()
+
+      // BODY //
+      for (j in 1 until rowCount) {
+        ImGui.tableNextRow()
+        for (k in 0 until columnCount) {
+          ImGui.tableNextColumn()
+          ImGui.tableSetBgColor(ImGuiTableBgTarget.CellBg, ImColor.rgba(64, 64, 64, 128))
+          ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, 8f, 4f)
+          ImGui.textWrapped(" ${body[j][k]} ")
+          ImGui.popStyleVar()
+        }
+        ImGui.text("")
+      }
+
+      ImGui.endTable()
+    }
+    ImGui.endChild()
   }
 }

@@ -10,9 +10,8 @@ import ru.hollowhorizon.hollowengine.client.docs.DocsUtils
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.text
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.TableType
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.table
-import ru.hollowhorizon.hollowengine.client.docs.pages.begin.icon3DModel
+import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.tablice
 import ru.hollowhorizon.hollowengine.common.files.DirectoryManager
-import ru.hollowhorizon.hollowengine.common.scripting.story.functions.npcs.textures
 import kotlin.io.path.pathString
 
 /*
@@ -119,4 +118,15 @@ fun DocsRenderer.testPage() {
   ImGui.newLine()
   ImGui.separator()
   ImGui.newLine()
+
+  text("Test table")
+
+  tablice(
+    "test_table",
+    arrayOf(
+      arrayOf("head 1", "head 2", "head 3"),
+      arrayOf("body 1", "body 2", "body 3")
+    ),
+    arrayOf(128f, 256f, 64f)
+  )
 }

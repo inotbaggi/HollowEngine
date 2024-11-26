@@ -9,5 +9,6 @@
   "begin": "Начало",
   "begin.new_directory": "Новая папка",
   "begin.commands": "/Команды",
-  "begin.scripts_type": "Типы скриптов"
+  "begin.scripts_type": "Типы скриптов",
+  "begin.assets": "Ресурсы (Ассеты)"
 }
