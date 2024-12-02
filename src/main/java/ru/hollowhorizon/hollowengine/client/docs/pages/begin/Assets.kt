@@ -114,43 +114,7 @@ fun DocsRenderer.assets() {
   separator()
   newLine()
 
-  hiddenButton("Регистрация звуков", "", hide1) {
-    hiddenButton("Ручная", "", hide2) {
-      text("Для этого создайте файл `sounds.json` и папку `sounds` в вашем `assets/<your_mod_id>`.")
-      text("Файл `sounds.json` заполните по следующему шаблону:")
-      Graphics.withFontSize(24) {
-        code("sounds.json", "json", "sounds.json") {
-          """
-        {
-          "sound_name": {
-            "category": "<SoundCategory>", // Не обязательно
-            "subtitle": "<translation_text>", // Не обязательно
-            "sounds": [
-              // Простая регистрация //
-              "<mod_id>:<path/to/sound>", // Путь указывается относительно папки sounds
-              
-              // Расширенная регистрация //
-              {
-                "name": "<mod_id>:<path/to/sound>", // Путь указывается относительно папки sounds
-                "volume": "<volume>", // Громкость
-                "pitch": "<pitch>", // Высота | Не обязательно
-                "weight": "<weight>" // Хз | Не обязательно
-                "stream": "<stream>" // Хз | Не обязательно
-              }
-              // И так через запятую столько, сколько вам нужно //
-            ]
-          }
-        }
-        """.trimIndent()
-        }
-      }
-      text("Размещаете свои звуки куда угодно после папки `sounds` и указываете в регистраторое путь к каждому звуку, относительно папки `sounds`.")
-    }
-    hiddenButton("Автоматическая", "", hide3) {
-      text("Тут всё гораздо проще.")
-      text("Поместите свои звуки в `assets/hollowengine/sounds/` и всё, движок сам их зарегистрирует.")
-    }
-  }
+
 }
 
 private fun modListNameAndId(): Array<Array<String>> {
