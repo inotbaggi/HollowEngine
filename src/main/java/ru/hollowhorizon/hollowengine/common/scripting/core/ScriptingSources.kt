@@ -1,14 +1,22 @@
 package ru.hollowhorizon.hollowengine.common.scripting.core
 
+//? if fabric {
 import net.fabricmc.loader.api.FabricLoader
 import net.fabricmc.loader.impl.FabricLoaderImpl
 import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider
+import java.nio.file.Path
+//?} else {
+/*import net.minecraftforge.fml.loading.FMLLoader
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import kotlin.io.path.absolutePathString
+import ru.hollowhorizon.hollowengine.compiler.HollowEngineCompilerRegistrar
+import ru.hollowhorizon.hc.common.events.SubscribeEvent
+*///?}
 import ru.hollowhorizon.hc.client.utils.ModList
 import ru.hollowhorizon.hc.client.utils.isProduction
 import ru.hollowhorizon.hollowengine.common.scripting.core.remapper.Remapper
 import sun.misc.Unsafe
 import java.io.File
-import java.nio.file.Path
 
 private val deobfClassPath: File = File("hollowcore/.classpath")
     .apply { if (!exists()) mkdirs() }
@@ -22,11 +30,8 @@ private fun forgeClasspath() = System.getProperty("java.class.path")
     .split(";").map(::File).toMutableSet()
 
 private fun setupSTDLib(files: Collection<File>) {
-    System.setProperty("kotlin.java.stdlib.jar", files.first { it.name.startsWith("kotlin-stdlib") }.absolutePath)
+    System.setProperty("kotlin.java.stdlib.jar", files.first { it.name.startsWith("kotlin-stdlib-jdk8") }.absolutePath)
 }
-
-fun compilerJar() = deobfClasspath.first { it.name == "kotlin-compiler-embeddable-mcfriendly-2.0.0.jar" }
-
 
 fun setupScripting() {
     cleanup()
@@ -37,30 +42,40 @@ fun setupScripting() {
     /*setupForge()*/
 
     setupMods()
+
+    setupSTDLib(if(isProduction) deobfClasspath else forgeClasspath())
 }
 
 fun cleanup() {
     val modsHashCode = ModList.mods.map { ModList.getFile(it) }.sumOf { it.hashCode() }
     val hashFile = File("hollowcore/scripting_env.hash").apply { if (!parentFile.exists()) parentFile.mkdirs() }
-    if(hashFile.exists()) {
-        if(hashFile.readText().toInt() == modsHashCode) return
+    if (hashFile.exists()) {
+        if (hashFile.readText().toInt() == modsHashCode) return
     }
     hashFile.writeText(modsHashCode.toString())
 
-    File("hollowcore/embedded_mods").walk().forEach { it.delete() }
+    File("hollowcore/embed_mods").walk().forEach { it.delete() }
     deobfClasspath.forEach { it.delete() }
 }
 
 fun setupMods() {
     if (isProduction) Remapper.remap(
         Remapper.DEOBFUSCATE_REMAPPER,
+        //? if fabric {
         ModList.mods
             .map { ModList.getFile(it) }
             .filter { it.name.endsWith(".jar") }
             .toTypedArray(),
+        //?} else {
+        /*File("hollowcore/embed_mods").walk()
+            .filter { it.extension == "jar" }
+            .toList().toTypedArray(),
+        *///?}
         deobfClassPath.toPath()
     )
 }
+
+//? if fabric {
 
 fun setupFabric() {
     val gameProvider =
@@ -82,12 +97,24 @@ fun setupFabric() {
         scriptingClasspath.addAll((libs + gameJars + logJars + parentClassPath).map { it.toFile() })
     }
 }
+//?}
 
-fun setupForge() {
+//? if forge {
+/*fun setupForge() {
     val classpath = forgeClasspath()
 
-    setupSTDLib(classpath)
+    val gameJars = FMLLoader.getLaunchHandler().minecraftPaths.minecraftPaths
+        .map { File(it.absolutePathString()) }.toTypedArray()
+
+    if (isProduction) {
+        Remapper.remap(Remapper.DEOBFUSCATE_REMAPPER, gameJars, deobfClassPath.toPath())
+    }
+
+    scriptingClasspath.addAll(classpath)
+
+    collectModsJars()
 }
+*///?}
 
 
 private val unsafe by lazy {
@@ -103,3 +130,14 @@ fun <T> findField(lookup: Any, name: String): T {
     val offset = unsafe.objectFieldOffset(field)
     return unsafe.getObject(lookup, offset) as T
 }
+
+fun compilerJar() = deobfClasspath.first { it.name.startsWith("kotlin-compiler-embeddable") }
+
+//? if forge {
+/*@OptIn(ExperimentalCompilerApi::class)
+@SubscribeEvent
+fun onCompilerRegistry(event: ScriptingCompilerPluginEvent) {
+    // Forge, ну вот что с тобой не так... Почему на Fabric он сам находит плагин?!
+    if(isProduction) event.addExtension(HollowEngineCompilerRegistrar())
+}
+*///?}

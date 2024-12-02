@@ -6,6 +6,7 @@ import imgui.flag.ImGuiWindowFlags
 import imgui.internal.ImGui
 import net.minecraft.client.Minecraft
 import net.minecraft.locale.Language
+import org.lwjgl.glfw.GLFW
 import ru.hollowhorizon.hc.client.imgui.Graphics
 import ru.hollowhorizon.hc.client.utils.open
 import ru.hollowhorizon.hc.client.utils.rl
@@ -15,7 +16,6 @@ import ru.hollowhorizon.hc.common.events.Event
 import ru.hollowhorizon.hc.common.events.SubscribeEvent
 import ru.hollowhorizon.hc.common.events.post
 import ru.hollowhorizon.hc.common.network.request
-import ru.hollowhorizon.hollowengine.client.docs.DocsRenderer
 import ru.hollowhorizon.hollowengine.client.gui.scripting.IDEGuiV2
 import ru.hollowhorizon.hollowengine.client.gui.scripting.RequestTreePacket
 
@@ -92,5 +92,4 @@ fun onAddTab(event: DashBoardScreen.TabEvent) {
             }
         }
     })
-    event.register(DashBoardScreen.Tab("docs", DocsRenderer()::open))
 }

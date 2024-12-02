@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.*
+import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.ai.goal.FloatGoal
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal
 import net.minecraft.world.entity.item.ItemEntity
@@ -24,6 +25,7 @@ import ru.hollowhorizon.hollowengine.client.gui.npcs.NPCMenuGui
 import ru.hollowhorizon.hollowengine.common.npcs.HitboxMode
 import ru.hollowhorizon.hollowengine.common.npcs.NPCCapability
 import ru.hollowhorizon.hollowengine.common.npcs.NpcIcon
+import ru.hollowhorizon.hollowengine.common.npcs.navigation.NpcPathNavigation
 import ru.hollowhorizon.hollowengine.common.registry.ModEntities
 import ru.hollowhorizon.hollowengine.common.registry.ModItems
 
@@ -45,6 +47,7 @@ class NPCEntity : PathfinderMob, IAnimated {
 
     init {
         setCanPickUpLoot(true)
+        attributes.getInstance(Attributes.FOLLOW_RANGE)?.baseValue = 128.0
     }
 
 
@@ -54,8 +57,7 @@ class NPCEntity : PathfinderMob, IAnimated {
         super.defineSynchedData()
     }
 
-    override fun createNavigation(pLevel: Level) = super.createNavigation(pLevel)
-        .apply { nodeEvaluator.setCanOpenDoors(true); nodeEvaluator.setCanPassDoors(true) }
+    override fun createNavigation(pLevel: Level) = NpcPathNavigation(pLevel, this)
 
     override fun mobInteract(pPlayer: Player, pHand: InteractionHand): InteractionResult {
         if (pHand == InteractionHand.MAIN_HAND && level().isClientSide && pPlayer.mainHandItem.item != ModItems.NPC_TOOL.get()) {
