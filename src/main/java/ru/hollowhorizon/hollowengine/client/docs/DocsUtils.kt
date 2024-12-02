@@ -4,6 +4,7 @@ import imgui.ImColor
 import imgui.ImGui
 import imgui.extension.texteditor.TextEditor
 import imgui.flag.*
+import imgui.type.ImBoolean
 import net.minecraft.Util
 import net.minecraft.client.gui.screens.ChatScreen
 import ru.hollowhorizon.hc.client.imgui.Graphics
@@ -51,11 +52,12 @@ object DocsUtils {
       "##code_block-$id",
       ImGui.getContentRegionAvailX() * 0.9f / 2 - ImGui.getContentRegionAvailX() / 2, codeBlockSize.y + 35f,
       true,
-      ImGuiWindowFlags.NoMove or ImGuiWindowFlags.NoResize
+      ImGuiWindowFlags.NoMove or ImGuiWindowFlags.NoResize or ImGuiWindowFlags.AlwaysVerticalScrollbar
     )
 
     EDITOR.text = text
-    EDITOR.render("##code_block-$id")
+    //EDITOR.render("##code_block-$id")
+    EDITOR.render(title)
 
     ImGui.endChild()
     ImGui.popStyleColor(4)
@@ -197,7 +199,8 @@ object DocsUtils {
     IMAGE(255, 255, 255),
     LINK(50, 103, 184),
     DIR(179, 138, 36),
-    ENTER_COMMAND(164, 32, 32)
+    ENTER_COMMAND(164, 32, 32),
+    HIDDEN(135, 100, 184)
   }
 
   fun button(
@@ -269,32 +272,38 @@ object DocsUtils {
   }
 
   fun accentText(text: String) {
-    val textSize = ImGui.calcTextSize(text)
+    val textSize = ImGui.calcTextSize(text, true, ImGui.getContentRegionAvailX())
+    val width =
+      if(textSize.x + 24f > ImGui.getContentRegionAvailX())
+        ImGui.getContentRegionAvailX()
+      else
+        textSize.x + 24f
+    val height =
+      if(textSize.y + 16f < ImGui.getContentRegionAvailY())
+        ImGui.getContentRegionAvailY()
+      else
+        textSize.y + 16f
 
     ImGui.pushStyleVar(ImGuiStyleVar.ChildBorderSize, 4f)
     ImGui.pushStyleVar(ImGuiStyleVar.ChildRounding, 8f)
     ImGui.pushStyleColor(ImGuiCol.ChildBg, 64, 64, 64, 255)
     ImGui.pushStyleColor(ImGuiCol.Border, 128, 128, 128, 255)
-    ImGui.beginChild("##accent_text", textSize.x + 24f, textSize.y + 16f, true)
+    ImGui.beginChild("##accent_text", width, height, true)
     ImGui.textWrapped(text)
     ImGui.endChild()
     ImGui.popStyleColor(2)
     ImGui.popStyleVar(2)
   }
-  fun tablice(tableID: String = "table", body: Array<Array<String>>, columnWidth: Array<Float?>? = null) {
+  fun tablice(tableID: String = "table", body: Array<Array<String>>, tabliceSize: Array<Float> = arrayOf(512f, 512f)) {
     val columnCount = body[0].size
     val rowCount = body.size
 
-    ImGui.beginChild("tableID=$tableID", columnCount * 417.5f, 72.5f * rowCount, false, ImGuiWindowFlags.HorizontalScrollbar)
+    ImGui.pushStyleColor(ImGuiCol.ChildBg, 16, 16, 16, 255)
+    ImGui.beginChild("tableID=$tableID", tabliceSize[0], tabliceSize[1], false, ImGuiWindowFlags.HorizontalScrollbar)
     if (ImGui.beginTable(tableID, columnCount, ImGuiTableFlags.Borders or ImGuiTableFlags.RowBg)) {
       // HEADERS //
       for (i in 0 until columnCount) {
-        val width = columnWidth?.getOrNull(i)
-        if (width != null) {
-          ImGui.tableSetupColumn(" ${body[0][i]} ", ImGuiTableColumnFlags.WidthFixed, width)
-        } else {
-          ImGui.tableSetupColumn(" ${body[0][i]} ")
-        }
+        ImGui.tableSetupColumn(" ${body[0][i]} ", ImGuiTableColumnFlags.WidthFixed, tabliceSize[0] / columnCount)
       }
       ImGui.tableHeadersRow()
 
@@ -314,5 +323,31 @@ object DocsUtils {
       ImGui.endTable()
     }
     ImGui.endChild()
+    ImGui.popStyleColor()
+  }
+  fun hiddenButton(label: String, lore: String = "", contentHidden: ImBoolean, content: () -> Any) {
+    val buttonLabel =
+      if(!contentHidden.get())
+        "Скрыть"
+      else
+        "Показать"
+    val width = ImGui.calcTextSize("$label | $buttonLabel")
+
+    ImGui.setCursorPosX(ImGui.getWindowSizeX() / 2f - width.x / 2f)
+    button(
+      "$label | $buttonLabel",
+      "Показывает/Скрывает часть содержимого." + if(lore!="") lore else "",
+      width = width.x + 24f,
+      buttonType = ButtonType.HIDDEN
+    ) {
+      if(contentHidden.get())
+        contentHidden.set(false)
+      else
+        contentHidden.set(true)
+    }
+    ImGui.newLine()
+
+    if(!contentHidden.get())
+      content()
   }
 }

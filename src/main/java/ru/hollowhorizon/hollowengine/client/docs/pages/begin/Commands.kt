@@ -72,7 +72,7 @@ fun DocsRenderer.commands() {
             "unknown"
           )
         ),
-        arrayOf(null, null, null)
+        arrayOf(ImGui.getWindowSizeX(), 512f)
       )
     }
   }

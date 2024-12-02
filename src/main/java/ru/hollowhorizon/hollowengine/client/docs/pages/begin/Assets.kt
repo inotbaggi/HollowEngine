@@ -1,23 +1,30 @@
 package ru.hollowhorizon.hollowengine.client.docs.pages.begin
 
-import imgui.ImColor
 import imgui.ImGui
-import imgui.flag.ImGuiTableBgTarget
-import imgui.ImGui.separator
-import imgui.ImGui.sameLine
-import imgui.ImGui.newLine
-import imgui.flag.ImGuiStyleVar
-import imgui.flag.ImGuiTableFlags
+import imgui.ImGui.*
+import imgui.type.ImBoolean
+//? if fabric {
+import net.fabricmc.loader.api.FabricLoader
+//?} else forge || neoforge {
+/*import net.minecraftforge.fml.ModList
+*///?}
 import ru.hollowhorizon.hc.client.imgui.Graphics
 import ru.hollowhorizon.hollowengine.client.docs.DocsPage
 import ru.hollowhorizon.hollowengine.client.docs.DocsRenderer
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.accentText
+import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.code
+import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.hiddenButton
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.table
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.tablice
 import ru.hollowhorizon.hollowengine.client.docs.DocsUtils.text
 
 const val begin_assets = "$begin.assets"
+
+val hide0 = ImBoolean(true)
+val hide1 = ImBoolean(true)
+val hide2 = ImBoolean(true)
+val hide3 = ImBoolean(true)
 
 @DocsPage(begin_assets)
 fun DocsRenderer.assets() {
@@ -31,40 +38,134 @@ fun DocsRenderer.assets() {
   separator()
   newLine()
 
-  table("ResourceLocation", DocsUtils.TableType.TIP, 1024f + 512f) {
-    text("Кто такой этот ваш `ResourceLocation`, или же: Как правильно обращаться к ресурсам.")
-
-    newLine()
-
-    table("Стоит отметить", DocsUtils.TableType.WARN, 512f + 128f + 64f + 16f) {
-      text("Обозвать как угодно файлы и папки - вам не удастся. У `ResourceLocation` есть для этого строгие правила:")
-      text("> Допустимы все буквы нижнего регистра и только латинский алфавит (т.е. от a-z) [a-z]", textAlign = DocsUtils.TextAlign.LEFT)
-      text("> Допустимы все цифры от 0 до 9 [0-9]", textAlign = DocsUtils.TextAlign.LEFT)
-      text("> Допустимы только эти символы: `_` и `-` [_, -].", textAlign = DocsUtils.TextAlign.LEFT)
+  hiddenButton("О `ResourceLocation`", "", hide0) {
+    table("ResourceLocation", DocsUtils.TableType.TIP, 1024f + 512f) {
+      text("Кто такой этот ваш `ResourceLocation`, или же: Как правильно обращаться к ресурсам.")
 
       newLine()
 
-      text("Всегда когда файлы обозваны неправильно - вылезает ошибка где написано `[a-z, 0-9, _, -]`, это и есть то же, что и было описано выше.")
-    }
+      table("Стоит отметить", DocsUtils.TableType.WARN, 512f + 128f + 64f + 16f) {
+        text("Обозвать как угодно файлы и папки - вам не удастся. У `ResourceLocation` есть для этого строгие правила:")
+        text(
+          "> Допустимы все буквы нижнего регистра и только латинский алфавит (т.е. от a-z) [a-z]",
+          textAlign = DocsUtils.TextAlign.LEFT
+        )
+        text("> Допустимы все цифры от 0 до 9 [0-9]", textAlign = DocsUtils.TextAlign.LEFT)
+        text("> Допустимы только эти символы: `_` и `-` [_, -].", textAlign = DocsUtils.TextAlign.LEFT)
 
-    newLine()
+        newLine()
 
-    text("Чтобы получить тот, или оной ресурс, который находится внутри игры - нужно использовать систему 'ResourceLocation`, который в свою очередь вызывается следующим способом:")
-    text("`mod_id:path/to/file.format`")
-    text("Освежим память:")
-    text("- `mod_id` - это Уникальный идентификатор мода. У всех модов он совершенно разный. Как пример в следующей таблице:", textAlign = DocsUtils.TextAlign.LEFT)
+        text("Всегда когда файлы обозваны неправильно - вылезает ошибка где написано `[a-z, 0-9, _, -]`, это и есть то же, что и было описано выше.")
+      }
 
-    Graphics.withFontSize(24) {
-      tablice(
-        "mod-name-id",
-        arrayOf(
-          arrayOf("Имя мода", "Его `mod_id`"),
-          arrayOf("HollowEngine", "hollowengine"),
-          arrayOf("Mekanism", "mekanism"),
-          arrayOf("", "")
-        ),
-        arrayOf()
+      newLine()
+
+      text("Чтобы получить тот, или оной ресурс, который находится внутри игры - нужно использовать систему 'ResourceLocation`, который в свою очередь вызывается следующим способом:")
+      text("`mod_id:path/to/file.format`")
+      text("Освежим память:")
+      text(
+        "- `mod_id` - это Уникальный идентификатор мода. У всех модов он совершенно разный. Как пример в следующей таблице:",
+        textAlign = DocsUtils.TextAlign.LEFT
+      )
+
+      Graphics.withFontSize(24) {
+        tablice("mod-name-id", modListNameAndId(), arrayOf(getWindowSizeX(), 256f))
+      }
+
+      text(
+        "- `path/to/file - это путь к нужному ресурсу, относительно от мода, в котором он находится.",
+        textAlign = DocsUtils.TextAlign.LEFT
+      )
+      text("- `format` - это расширение требуемого файла.", textAlign = DocsUtils.TextAlign.LEFT)
+
+      newLine()
+
+      text("Приведём пример:", textAlign = DocsUtils.TextAlign.LEFT)
+      text("Предположим, что у нас есть мод `hollowengine`, где есть модель которая расположена по пути:")
+      accentText("assets/hollowengine/models/item/apple3d.gltf`")
+      text("внутри мода.", textAlign = DocsUtils.TextAlign.LEFT)
+      text(
+        "Теперь, чтобы получить данный ресурс, в начале нужно указать - с какого мода мы запрашиваем ресурс по его `mod_id`. В нашем случае, данный мод - HollowEngine, где его `mod_id` - это `hollowengine`.",
+        textAlign = DocsUtils.TextAlign.LEFT
+      )
+      text(
+        "Дальше мы указывает просто путь относительно папки, которая названа `mod_id`. То есть, мы указали путь `hollowengine:models/item/apple3d.gltf`.",
+        textAlign = DocsUtils.TextAlign.LEFT
       )
     }
   }
+
+  separator()
+
+  text("Поддерживаемые форматы файлов", 40)
+  newLine()
+
+  tablice(
+    "support-file",
+    arrayOf(
+      arrayOf("Название", "Расширение"),
+      arrayOf("Изображение (Текстура)", ".png, .gif"),
+      arrayOf("Модели", ".gltf, .glb"),
+      arrayOf("Звук", ".ogg")
+    ),
+    arrayOf(ImGui.getWindowSizeX() - 32f, 256f)
+  )
+
+  separator()
+  newLine()
+
+  hiddenButton("Регистрация звуков", "", hide1) {
+    hiddenButton("Ручная", "", hide2) {
+      text("Для этого создайте файл `sounds.json` и папку `sounds` в вашем `assets/<your_mod_id>`.")
+      text("Файл `sounds.json` заполните по следующему шаблону:")
+      Graphics.withFontSize(24) {
+        code("sounds.json", "json", "sounds.json") {
+          """
+        {
+          "sound_name": {
+            "category": "<SoundCategory>", // Не обязательно
+            "subtitle": "<translation_text>", // Не обязательно
+            "sounds": [
+              // Простая регистрация //
+              "<mod_id>:<path/to/sound>", // Путь указывается относительно папки sounds
+              
+              // Расширенная регистрация //
+              {
+                "name": "<mod_id>:<path/to/sound>", // Путь указывается относительно папки sounds
+                "volume": "<volume>", // Громкость
+                "pitch": "<pitch>", // Высота | Не обязательно
+                "weight": "<weight>" // Хз | Не обязательно
+                "stream": "<stream>" // Хз | Не обязательно
+              }
+              // И так через запятую столько, сколько вам нужно //
+            ]
+          }
+        }
+        """.trimIndent()
+        }
+      }
+      text("Размещаете свои звуки куда угодно после папки `sounds` и указываете в регистраторое путь к каждому звуку, относительно папки `sounds`.")
+    }
+    hiddenButton("Автоматическая", "", hide3) {
+      text("Тут всё гораздо проще.")
+      text("Поместите свои звуки в `assets/hollowengine/sounds/` и всё, движок сам их зарегистрирует.")
+    }
+  }
+}
+
+private fun modListNameAndId(): Array<Array<String>> {
+  val modNameAndId =
+    mutableListOf(
+      arrayOf("Имя мода", "Его `mod_id`")
+    )
+  //? if fabric {
+  for(mod in FabricLoader.getInstance().allMods) {
+    modNameAndId += arrayOf(mod.metadata.name, mod.metadata.id)
+  }
+  //?} else forge || neoforge {
+  /*for(mdo in net.minecraftforge.fml.ModList) {
+    modNameAndId += arrayOf(mod.displayName, mod.modId)
+  }
+  *///?}
+  return modNameAndId.toTypedArray()
 }
