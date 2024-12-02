@@ -29,6 +29,7 @@ enum class DocsPages {
 var docsPages = DocsPages.NONE
 */
 
+// Уважаемый, или не очень Bendy659, не изобретайте велосипед, HollowCore уже имеет буквально такой же класс TickHandler, возьмите данные оттуда. А велосипед отдайте Данбату или Уёртику, вдруг он им пригодится?
 var ticks: Int = 0
 @SubscribeEvent
 fun onTick(event: TickEvent.Client) {
