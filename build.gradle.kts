@@ -137,13 +137,11 @@ dependencies {
     dependency("com.akuleshov7:ktoml-core-jvm:0.5.1")
 
     // IMGUI //
-    dependency("team.0mods:imgui-app:$imguiVersion")
-    dependency("team.0mods:imgui-binding:$imguiVersion")
-    dependency("team.0mods:imgui-lwjgl3:$imguiVersion")
-    dependency("team.0mods:imgui-binding-natives:$imguiVersion")
-
-    dependency("com.extollit.gaming:hydrazine-path-engine:1.8.1", true)
-    dependency("dev.folomeev.kotgl:kotgl-matrix:0.0.1-beta")
+    dependency("team.0mods:kool-core-desktop:0.16.0-SNAPSHOT")
+    dependency("team.0mods:kool-editor-desktop:0.16.0-SNAPSHOT")
+    dependency("team.0mods:kool-editor-model-desktop:0.16.0-SNAPSHOT")
+    dependency("team.0mods:kool-physics-desktop:0.16.0-SNAPSHOT")
+    dependency("com.tianscar.imageio:imageio-apng:1.0.1")
 
     // OTHER
     implementation("org.ow2.asm:asm:9.7")
@@ -306,6 +304,7 @@ fun DependencyHandlerScope.dependency(path: String, addToJar: Boolean = false) {
     val dependency = implementation(path) {
         exclude("org.jetbrains.kotlin")
         exclude("org.ow2.asm")
+        exclude("org.lwjgl")
     }
     if(addToJar) include(dependency)
 
