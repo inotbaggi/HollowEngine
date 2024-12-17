@@ -1,5 +1,6 @@
 package ru.hollowhorizon.hollowengine.client.docs.pages
 
+import ru.hollowhorizon.hc.client.handlers.TickHandler
 import ru.hollowhorizon.hc.client.models.internal.manager.AnimatedEntityCapability
 import ru.hollowhorizon.hc.client.utils.get
 import ru.hollowhorizon.hc.client.utils.mc
@@ -29,9 +30,4 @@ enum class DocsPages {
 var docsPages = DocsPages.NONE
 */
 
-// Уважаемый, или не очень Bendy659, не изобретайте велосипед, HollowCore уже имеет буквально такой же класс TickHandler, возьмите данные оттуда. А велосипед отдайте Данбату или Уёртику, вдруг он им пригодится?
-var ticks: Int = 0
-@SubscribeEvent
-fun onTick(event: TickEvent.Client) {
-  if(event.minecraft.player != null) ticks++
-}
+var ticks: Int = TickHandler.currentTicks
