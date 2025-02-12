@@ -19,14 +19,12 @@ fun UiScope.text(
 ) = Text(text) {
   launchOnMainThread {
     val meta = Json.decodeFromString<MsdfMeta>(Assets.loadBlob("hollowengine:fonts/hack.json").getOrThrow().decodeToString())
-    val data = remember {
-      Texture2d(MSDF_TEX_PROPS, "MsdfFont:${meta.name}") { Assets.loadImage2d("hollowengine:fonts/hack.png").getOrThrow() }
-    }
+    val data = Texture2d(MSDF_TEX_PROPS, "MsdfFont:${meta.name}") { Assets.loadImage2d("hollowengine:fonts/hack.png").getOrThrow() }
     modifier.font(MsdfFont(
       MsdfFontData(data, meta),
       sizePts = headType.fontSize,
-      weight = if (bold) MsdfFont.WEIGHT_BOLD else MsdfFont.WEIGHT_REGULAR,
-      italic = if (italic) MsdfFont.ITALIC_STD else MsdfFont.ITALIC_NONE
+      weight = if (bold) 0.25f else 0f,
+      italic = if (italic) 0.25f else 0f
     ))
   }
   modifier
