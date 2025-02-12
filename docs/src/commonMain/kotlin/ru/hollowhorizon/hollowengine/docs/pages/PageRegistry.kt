@@ -3,7 +3,6 @@ package ru.hollowhorizon.hollowengine.docs.pages
 import de.fabmax.kool.util.logI
 import ru.hollowhorizon.hollowengine.docs.DocPage
 import ru.hollowhorizon.hollowengine.docs.DocsNode
-import ru.hollowhorizon.hollowengine.docs.SimpleTextPage
 
 object PageRegistry {
     var currentPage: DocPage? = null
@@ -13,15 +12,7 @@ object PageRegistry {
         }
     lateinit var setPage: () -> Unit
 
-    fun loadPages(root: DocsNode) {
-        root.apply {
-            addPage(SimpleTextPage("Создание нпс", "npcs", "Тут чёта про создание"))
-            addPage(SimpleTextPage("Удаление нпс", "npcs", "Тут чёта про удаление"))
-
-            addPage(SimpleTextPage("Эффекты (Бедрок)", "effects/bedrock", "Чёта про эффекты"))
-            addPage(SimpleTextPage("Эффекты (Эфиксер)", "effects/effekseer", "Чёта про эффекты"))
-        }
-    }
+    fun loadPages(root: DocsNode) {}
 }
 
 fun DocsNode.addPage(page: DocPage) {
