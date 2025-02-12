@@ -44,9 +44,9 @@ fun setupScripting() {
         /*setupForge()*/
 
         setupMods()
-    }
 
-    setupSTDLib(if(isProduction) deobfClasspath else forgeClasspath())
+        setupSTDLib(if(isProduction) deobfClasspath else forgeClasspath())
+    }
 }
 
 fun cleanup() {

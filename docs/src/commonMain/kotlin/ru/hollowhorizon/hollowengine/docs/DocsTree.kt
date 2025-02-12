@@ -4,7 +4,6 @@ import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.modules.ui2.ArrowScope.Companion.ROTATION_DOWN
 import de.fabmax.kool.modules.ui2.ArrowScope.Companion.ROTATION_RIGHT
 import de.fabmax.kool.util.logI
-import ru.hollowhorizon.hollowengine.docs.pages.DocPage
 import ru.hollowhorizon.hollowengine.docs.pages.PageRegistry
 
 class DocsNode(val treeName: String, val treePath: String) : Composable {

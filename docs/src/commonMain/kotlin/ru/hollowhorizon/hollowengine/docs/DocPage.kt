@@ -1,4 +1,4 @@
-package ru.hollowhorizon.hollowengine.docs.pages
+package ru.hollowhorizon.hollowengine.docs
 
 import de.fabmax.kool.modules.ui2.UiScope
 
