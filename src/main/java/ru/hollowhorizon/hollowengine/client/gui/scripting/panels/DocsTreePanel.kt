@@ -14,13 +14,9 @@ class DocsTreePanel(dock: Dock) : DockPanel("hollowengine.gui.ide.docs", dock) {
     }
 
     val docsTree = DocsNode("HollowEngine", "").apply {
-        initPages()
-
         isFolder = true
         children += DocsNode("welcome", WelcomePage)
     }.resize()
-
-    private fun initPages() {}
 
     private fun FileNode.resize(depth: Int = 0): FileNode {
         this.depth = depth
