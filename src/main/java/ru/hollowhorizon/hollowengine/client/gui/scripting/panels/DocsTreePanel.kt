@@ -4,6 +4,7 @@ import de.fabmax.kool.modules.ui2.UiScope
 import de.fabmax.kool.modules.ui2.docking.Dock
 import ru.hollowhorizon.hollowengine.client.gui.docs.DocsNode
 import ru.hollowhorizon.hollowengine.client.gui.scripting.FileNode
+import ru.hollowhorizon.hollowengine.docs.pages.TestPage
 import ru.hollowhorizon.hollowengine.docs.pages.WelcomePage
 
 class DocsTreePanel(dock: Dock) : DockPanel("hollowengine.gui.ide.docs", dock) {
@@ -18,6 +19,8 @@ class DocsTreePanel(dock: Dock) : DockPanel("hollowengine.gui.ide.docs", dock) {
 
         isFolder = true
         children += DocsNode("welcome", WelcomePage)
+
+        children += DocsNode("test", TestPage)
     }.resize()
 
     private fun initPages() {}

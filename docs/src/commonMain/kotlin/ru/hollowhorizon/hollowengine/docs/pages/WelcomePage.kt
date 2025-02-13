@@ -1,9 +1,6 @@
 package ru.hollowhorizon.hollowengine.docs.pages
 
-import de.fabmax.kool.modules.ui2.Column
-import de.fabmax.kool.modules.ui2.Composable
-import de.fabmax.kool.modules.ui2.Row
-import de.fabmax.kool.modules.ui2.UiScope
+import de.fabmax.kool.modules.ui2.*
 import ru.hollowhorizon.hollowengine.docs.*
 
 object WelcomePage : Composable {
@@ -13,14 +10,16 @@ object WelcomePage : Composable {
     text("на официальную документацию по моду", THType.H2, true)
     text("\"HollowEngine\"", THType.H3, true)
     br()
-    title("welcome")
+    title("test_title")
 
     br()
     divite()
     br()
 
     Row {
-      text("Данная документация должна обучить"); text(" вас", bold = true); text("основам скриптинга в данном моде.")
+      modifier.align(AlignmentX.Center)
+        .margin(8.dp)
+      text("Данная документация должна обучить", margin=false); text(" вас", bold=true, margin=false); text("основам скриптинга в данном моде.", margin=false)
     }
   }
 }
