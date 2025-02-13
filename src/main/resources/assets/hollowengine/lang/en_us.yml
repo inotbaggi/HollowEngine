@@ -41,30 +41,7 @@ hollowengine:
     docs:
       welcome: Welcome
       credits: Credits
-      scripting:
-        .: Scripting
-        story_events:
-          .: Story Events
-          npcs:
-            .: NPCs
-            creation: Creation
-            options: Configuration
-            actions: Actions
-            animations: Animations
-            quests: Quests
-            trading: Trading
-          scene:
-            .: Scene
-            world: World
-            dialogues: Dialogues
-            camera: Camera
-            transitions: Transitions
-            particles: Particles
-            shaders: Post-processing
-          players:
-            .: Players
-          utils:
-            .: Miscellaneous
+      test: TestPage
 
   hud:
     compilation:

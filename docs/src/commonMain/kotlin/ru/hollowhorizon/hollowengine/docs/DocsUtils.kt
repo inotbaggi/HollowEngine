@@ -5,13 +5,19 @@ import de.fabmax.kool.loadBlob
 import de.fabmax.kool.loadImage2d
 import de.fabmax.kool.math.Vec2f
 import de.fabmax.kool.modules.ui2.*
+import de.fabmax.kool.pipeline.SamplerSettings
 import de.fabmax.kool.pipeline.Texture2d
+import de.fabmax.kool.pipeline.TextureProps
 import de.fabmax.kool.util.*
 import de.fabmax.kool.util.MsdfFont.Companion.MSDF_TEX_PROPS
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
 
+private val json = Json { ignoreUnknownKeys = true }
+
 enum class THType(val fontSize: Float) { H1(16f), H2(14f), H3(12f), H4(10f), H5(8f), H6(6f) }
+
 fun UiScope.text(
   text: String,
   headType: THType = THType.H4,
@@ -20,8 +26,8 @@ fun UiScope.text(
   margin: Boolean = true
 ): UiScope = Text(text) {
   launchOnMainThread {
-    val meta = Json.decodeFromString<MsdfMeta>(Assets.loadBlob("hollowengine:fonts/hack.json").getOrThrow().decodeToString())
-    val data = Texture2d(MSDF_TEX_PROPS, "MsdfFont:${meta.name}") { Assets.loadImage2d("hollowengine:fonts/hack.png").getOrThrow() }
+    val meta = json.decodeFromString<MsdfMeta>(Assets.loadBlob("hollowengine:fonts/hack.json").getOrThrow().decodeToString())
+    val data = Texture2d(MSDF_TEX_PROPS, "MsdfFont:${meta.name}") { Assets.loadImage2d("hollowengine:fonts/hack.png", MSDF_TEX_PROPS).getOrThrow() }
     modifier.font(MsdfFont(
       MsdfFontData(data, meta),
       sizePts = headType.fontSize,
@@ -55,30 +61,31 @@ fun UiScope.title(id: String = "null_title") = Image(remember {
 }
 
 enum class TableType(val bg: String, val border: String, val icon: String) {
-  NOTE("969696", "e8e8e8", "hollowengine:docs/icons/table_note.png"),
-  TIP("34783a", "7bed85", "hollowengine:docs/icons/table_tip.png")
+  NOTE("969696", "e8e8e8", "table_note"),
+  TIP("34783a", "7bed85", "table_tip")
 }
 fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Unit) {
-  Box {
+  Column {
     modifier
       .align(AlignmentX.Center)
       .backgroundColor(Color(type.bg))
       .padding(8.dp)
       .margin(4.dp)
-      .border(RectBorder(Color(type.border), 4.dp))
+      .border(RectBorder(Color(type.border), 2.dp))
 
     Row {
-      modifier.align(AlignmentX.Center)
+      modifier.align(AlignmentX.Center, AlignmentY.Top).margin(4.dp, 8.dp)
 
-      Image(loadImage("icons/${type.icon}_old.png")) { modifier.align(AlignmentX.Start) }
-      Text(title) {}
-      Image(loadImage("icons/${type.icon}_old.png")) { modifier.align(AlignmentX.End) }
+      Image(loadImage("icons/${type.icon}.png")) { modifier.align(AlignmentX.Center).tint(Color(type.border)).margin(8.dp).size(16.dp, 16.dp) }
+      Text(title) { modifier.align(AlignmentX.Center) }
+      Image(loadImage("icons/${type.icon}.png")) { modifier.align(AlignmentX.Center).tint(Color(type.border)).margin(8.dp).size(16.dp, 16.dp) }
       divite()
       br()
-
-      body()
     }
+    body()
   }
 }
 
-fun UiScope.loadImage(path: String) = remember { Texture2d { Assets.loadImage2d("hollowengine:docs/$path").getOrThrow() } }
+fun UiScope.loadImage(path: String) = remember { Texture2d {
+  Assets.loadImage2d("hollowengine:docs/$path", TextureProps(defaultSamplerSettings = SamplerSettings().nearest())).getOrThrow()
+} }

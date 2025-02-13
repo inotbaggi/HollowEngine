@@ -19,7 +19,7 @@ object WelcomePage : Composable {
     Row {
       modifier.align(AlignmentX.Center)
         .margin(8.dp)
-      text("Данная документация должна обучить", margin=false); text(" вас", bold=true, margin=false); text("основам скриптинга в данном моде.", margin=false)
+      text("Данная документация должна обучить", margin=false); text("вас", bold=true, margin=false); text("основам скриптинга в данном моде.", margin=false)
     }
   }
 }
