@@ -70,9 +70,9 @@ fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Unit) {
     Row {
       modifier.align(AlignmentX.Center)
 
-      Image(loadImage("icons/${type.icon}")) { modifier.align(AlignmentX.Start) }
+      Image(loadImage("icons/${type.icon}_old.png")) { modifier.align(AlignmentX.Start) }
       Text(title) {}
-      Image(loadImage("icons/${type.icon}")) { modifier.align(AlignmentX.End) }
+      Image(loadImage("icons/${type.icon}_old.png")) { modifier.align(AlignmentX.End) }
       divite()
       br()
 
