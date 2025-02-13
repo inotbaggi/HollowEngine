@@ -10,7 +10,6 @@ import de.fabmax.kool.pipeline.Texture2d
 import de.fabmax.kool.pipeline.TextureProps
 import de.fabmax.kool.util.*
 import de.fabmax.kool.util.MsdfFont.Companion.MSDF_TEX_PROPS
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
 
@@ -40,7 +39,7 @@ fun UiScope.text(
     .margin(if(margin) 8.dp else 0.dp, 4.dp)
 }
 
-fun UiScope.divite() = Box {  modifier.size(Grow.Std, 1.dp).backgroundColor(Color.WHITE).margin(sizes.gap) }
+fun UiScope.divide(color: Color = Color.WHITE) = Box {  modifier.size(Grow.Std, 1.dp).backgroundColor(color).margin(sizes.gap) }
 fun UiScope.br() = Box { modifier.size(Grow.Std, sizes.smallGap).margin(8.dp, 32.dp) }
 
 fun UiScope.title(id: String = "null_title") = Image(remember {
@@ -61,28 +60,31 @@ fun UiScope.title(id: String = "null_title") = Image(remember {
 }
 
 enum class TableType(val bg: String, val border: String, val icon: String) {
-  NOTE("969696", "e8e8e8", "table_note"),
-  TIP("34783a", "7bed85", "table_tip")
+  NOTE("878787", "d4d4d4", "note"),
+  TIP("438c34", "73d160", "tip"),
+  INFO("3c86a3", "5fafcf", "info"),
+  WARN("8a6932", "e8c268", "warn"),
+  ERR("913131", "e84646", "err")
 }
 fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Unit) {
   Column {
     modifier
       .align(AlignmentX.Center)
       .backgroundColor(Color(type.bg))
-      .padding(8.dp)
-      .margin(4.dp)
+      .margin(2.dp)
       .border(RectBorder(Color(type.border), 2.dp))
 
     Row {
-      modifier.align(AlignmentX.Center, AlignmentY.Top).margin(4.dp, 8.dp)
+      modifier.align(AlignmentX.Center, AlignmentY.Top).margin(2.dp)
 
-      Image(loadImage("icons/${type.icon}.png")) { modifier.align(AlignmentX.Center).tint(Color(type.border)).margin(8.dp).size(16.dp, 16.dp) }
-      Text(title) { modifier.align(AlignmentX.Center) }
-      Image(loadImage("icons/${type.icon}.png")) { modifier.align(AlignmentX.Center).tint(Color(type.border)).margin(8.dp).size(16.dp, 16.dp) }
-      divite()
-      br()
+      Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(8.dp).size(16.dp, 16.dp) }
+      Text(title) { modifier.alignY(AlignmentY.Center) }
+      Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(8.dp).size(16.dp, 16.dp) }
     }
+    divide(Color(type.border))
+    br()
     body()
+    br()
   }
 }
 

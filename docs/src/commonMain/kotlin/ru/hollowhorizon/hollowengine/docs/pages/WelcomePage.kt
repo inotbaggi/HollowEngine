@@ -13,7 +13,7 @@ object WelcomePage : Composable {
     title("test_title")
 
     br()
-    divite()
+    divide()
     br()
 
     Row {
