@@ -6,12 +6,9 @@ hollowengine:
       file: File
       edit: Edit
       search: Search
-      settings:
-        .: Settings
-        theme: Theme
+      settings: Settings
       project_tree: Project
       docs: Documentation
-      recipes: Recipe Editor
 
       popups:
         create_folder: "Enter folder name:"
@@ -41,9 +38,6 @@ hollowengine:
     docs:
       welcome: Welcome
       credits: Credits
-      begin:
-        .: Begin
-        directory: Directory
       test: TestPage
 
   hud:

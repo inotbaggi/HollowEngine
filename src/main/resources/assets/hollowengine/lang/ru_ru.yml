@@ -6,12 +6,9 @@ hollowengine:
       file: Файл
       edit: Правка
       search: Поиск
-      settings:
-        .: Настройки
-        theme: Тема
+      settings: Настройки
       project_tree: Проект
       docs: Документация
-      recipes: Редактор рецептов
 
       popups:
         create_folder: "Введите название папки:"
@@ -42,9 +39,6 @@ hollowengine:
     docs:
       welcome: Добро пожаловать
       credits: Авторы
-      begin:
-        .: Начало
-        directory: Директория
       test: TestPage
 
 
