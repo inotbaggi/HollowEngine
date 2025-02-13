@@ -1,6 +1,5 @@
 package ru.hollowhorizon.hollowengine.docs.pages
 
-import de.fabmax.kool.input.Input
 import de.fabmax.kool.modules.ui2.*
 import ru.hollowhorizon.hollowengine.docs.*
 
@@ -14,19 +13,29 @@ object TestPage: Composable {
     br()
     text("Test bold & italic text", bold=true, italic=true); text("Тест жирный и курсив текст", bold=true, italic=true)
 
-    divite()
+    divide()
 
     text("Тестовое картинка")
     title("test_title")
 
-    divite()
+    divide()
 
     text("Таблицы")
     br()
-    listOf(TableType.NOTE, TableType.TIP).forEach {
-      table("Example HEAD", it) {
-        text("Example BODY")
+    HorizontalScrollbar("tables_scrolling") {
+      ScrollArea { modifier.width(FitContent)
+        Row {
+          modifier.align(AlignmentX.Center)
+
+          listOf(TableType.NOTE, TableType.TIP, TableType.INFO, TableType.WARN, TableType.ERR).forEach {
+            table("Example HEAD", it) {
+              text("Example BODY")
+            }
+          }
+        }
       }
     }
+
+    br()
   }
 }
