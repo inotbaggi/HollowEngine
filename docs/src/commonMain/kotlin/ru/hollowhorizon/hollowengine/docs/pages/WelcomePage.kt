@@ -4,36 +4,31 @@ import de.fabmax.kool.modules.ui2.*
 import ru.hollowhorizon.hollowengine.docs.*
 
 object WelcomePage : Composable {
-  override fun UiScope.compose() {
-    br()
-    text("Добро пожаловать", THType.H1, true)
-    text("на официальную документацию по моду", THType.H2, true)
-    text("\"HollowEngine\"", THType.H3, true)
-    br()
-    title("test_title")
+    override fun UiScope.compose() {
+        br()
+        text("Добро пожаловать", Header.H1)
+        text("на официальную документацию по моду", Header.H2)
+        text("\"HollowEngine\"", Header.H3, bold = true)
+        br()
+        title("test_title")
 
-    br()
-    divide()
-    br()
+        br()
+        divide()
+        br()
 
-    Row {
-      modifier.align(AlignmentX.Center)
-        .margin(8.dp)
-      text("Данная документация должна обучить", margin=false); text("вас", bold=true, margin=false); text("основам скриптинга в данном моде.", margin=false)
+        text("Данная документация должна обучить вас основам скриптинга в данном моде.")
+
+        br()
+        divide()
+        br()
+
+        table("Внимание", TableType.WARN) {
+            text("Это бета-версия документации, так что всё в будущем может изменится.")
+            divide()
+            text("При обнаружении ошибок сообщите или на GitHub Issues или на Discord сервере Phase Of Horizon.")
+            text("Успехов в разработке!")
+        }
+
+        br()
     }
-
-    br()
-    divide()
-    br()
-
-    table("Внимание", TableType.WARN) {
-      text("Это бета-версия документации, так что всё в будущем может изменится.")
-      divide()
-      text("Почти вся документация написана НН, по нику \"_BENDY659_\" (напомните этому дауну чтоб потом сделал форматирование!)")
-      text("Так что даже не смейте орать на, О великого \"TheHollowHorizon\" за то что - доки конченные, не точные и ест ьошибки. Пиздите лучше на того дауна!")
-      text("С любовью: \"NullPointerException\" :D")
-    }
-
-    br()
-  }
 }
