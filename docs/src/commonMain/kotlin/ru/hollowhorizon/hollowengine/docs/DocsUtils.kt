@@ -37,10 +37,12 @@ fun UiScope.text(
   modifier
     .align(AlignmentX.Center)
     .margin(if(margin) 8.dp else 0.dp, 4.dp)
+    .width(FitContent)
+    .isWrapText(true)
 }
 
 fun UiScope.divide(color: Color = Color.WHITE) = Box {  modifier.size(Grow.Std, 1.dp).backgroundColor(color).margin(sizes.gap) }
-fun UiScope.br() = Box { modifier.size(Grow.Std, sizes.smallGap).margin(8.dp, 32.dp) }
+fun UiScope.br() = Box { modifier.size(Grow.Std, 4.dp).margin(sizes.gap) }
 
 fun UiScope.title(id: String = "null_title") = Image(remember {
   Texture2d { Assets.loadImage2d("hollowengine:docs/titles/$id.png").getOrThrow() }
@@ -71,8 +73,9 @@ fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Unit) {
     modifier
       .align(AlignmentX.Center)
       .backgroundColor(Color(type.bg))
-      .margin(2.dp)
+      .margin(8.dp)
       .border(RectBorder(Color(type.border), 2.dp))
+      .width(Grow.Std)
 
     Row {
       modifier.align(AlignmentX.Center, AlignmentY.Top).margin(2.dp)

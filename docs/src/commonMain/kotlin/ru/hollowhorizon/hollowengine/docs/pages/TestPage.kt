@@ -1,6 +1,7 @@
 package ru.hollowhorizon.hollowengine.docs.pages
 
 import de.fabmax.kool.modules.ui2.*
+import de.fabmax.kool.modules.ui2.Grow.Companion.Std
 import ru.hollowhorizon.hollowengine.docs.*
 
 object TestPage: Composable {
@@ -22,15 +23,11 @@ object TestPage: Composable {
 
     text("Таблицы")
     br()
-    HorizontalScrollbar("tables_scrolling") {
-      ScrollArea { modifier.width(FitContent)
-        Row {
-          modifier.align(AlignmentX.Center)
-
-          listOf(TableType.NOTE, TableType.TIP, TableType.INFO, TableType.WARN, TableType.ERR).forEach {
-            table("Example HEAD", it) {
-              text("Example BODY")
-            }
+    ScrollArea { modifier.height(Std).align(AlignmentX.Center)
+      Row { modifier.align(AlignmentX.Center)
+        listOf(TableType.NOTE, TableType.TIP, TableType.INFO, TableType.WARN, TableType.ERR).forEach {
+          table("Example HEAD", it) {
+            text("Example BODY")
           }
         }
       }
