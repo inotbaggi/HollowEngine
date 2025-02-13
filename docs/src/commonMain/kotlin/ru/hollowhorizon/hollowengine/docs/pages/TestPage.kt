@@ -6,6 +6,8 @@ import ru.hollowhorizon.hollowengine.docs.*
 
 object TestPage: Composable {
   override fun UiScope.compose() {
+    var tableTypes = TableType.NOTE
+
     text("test text"); text("тест текст")
     br()
     text("TEST BIG TEXT", THType.H1); text("ТЕСТ БОЛЬШОЙ ТЕКСТ", THType.H1)
@@ -19,18 +21,11 @@ object TestPage: Composable {
 
     divite()
 
-    var tableTypes = TableType.NOTE
-    table("Заголовок таблички", tableTypes) {
-      text("АХХАХАХАХХАХАХАХАХАХАХАХАХАХХАХАХАХАХАХ")
-    }
-    Row {
-      listOf(TableType.NOTE, TableType.TIP).forEachIndexed { index, value ->
-        Button("$index") {
-          modifier.onClick {
-            tableTypes = value
-            
-          }
-        }
+    text("Таблицы")
+    br()
+    listOf(TableType.NOTE, TableType.TIP).forEach {
+      table("Example HEAD", it) {
+        text("Example BODY")
       }
     }
   }
