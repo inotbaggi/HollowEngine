@@ -12,6 +12,7 @@ import de.fabmax.kool.util.*
 import de.fabmax.kool.util.MsdfFont.Companion.ITALIC_STD
 import de.fabmax.kool.util.MsdfFont.Companion.MSDF_TEX_PROPS
 import de.fabmax.kool.util.MsdfFont.Companion.WEIGHT_BOLD
+import de.fabmax.kool.util.MsdfFont.Companion.WEIGHT_LIGHT
 import kotlinx.serialization.json.Json
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
 
@@ -43,7 +44,7 @@ fun UiScope.text(
     val font = MsdfFont(
         HACK_FONT,
         sizePts = header.fontSize,
-        weight = if (bold) WEIGHT_BOLD else 0f,
+        weight = if (bold) WEIGHT_LIGHT else 0f,
         italic = if (italic) ITALIC_STD else 0f
     )
 
@@ -119,3 +120,44 @@ fun UiScope.loadImage(path: String) = remember {
         ).getOrThrow()
     }
 }
+
+// Дорогуша, давай так. Я если захочу какой-то цвет, то ты перееводишь его сразу в HEX формат, либо в RGB, хорошо?)
+// - Или сразу в RGB, но в HEX формате.
+// Не-не-не. Именно ЛИБО в RGB, ЛИБО в HEX, окей?
+// - Или сразу в RGB, но в HEX формате.
+// Ну нет.
+// - Дорогуша, давай так.
+// Спасибо, ты лучшая IDEA
+// Окей, тогда как будет "Красный цвет" в HEX формате?
+// - Красный цвет в HEX формате.
+// Да, как, напиши!
+// - Красный цвет в HEX формате.
+// Да-да.. красный..
+// - Красный цвет в HEX формате.
+// Да, как, напиши!
+// - Красный цвет в HEX формате.
+// Ну ты же можешь, давай
+// - Красный цвет в HEX формате.
+// Ну HEX-формат, это который: #RRGGBB, поняла?
+// - Красный цвет в HEX формате.
+// Да, в HEX-формате, как будет "Красный цвет"?!
+// ! FF0000 <- ВОт
+// - Красный цвет в HEX формате.
+// Ладно, может ты и умеешь читать мои мысли, но видимо не совсем...
+// - Красный цвет в HEX формате.
+
+enum class ButtonType(val color: String, val border: String) {
+    DEFAULT("ff0000", "00ff00"),
+    DIR("00ff00", "0000ff"),
+    LINK("0000ff", "ff0000")
+}
+fun UiScope.button(
+    text: String = "",
+    type: ButtonType = ButtonType.DEFAULT,
+    action: () -> Unit
+) = Button(text) {
+    modifier
+        .colors(buttonColor = Color(type.color), buttonHoverColor = Color(type.border))
+        .onClick { action() }
+}
+expect fun openUrl(url: String)

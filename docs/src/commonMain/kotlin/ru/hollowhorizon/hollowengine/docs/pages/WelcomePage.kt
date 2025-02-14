@@ -27,6 +27,9 @@ object WelcomePage : Composable {
             divide()
             text("При обнаружении ошибок сообщите или на GitHub Issues или на Discord сервере Phase Of Horizon.")
             text("Успехов в разработке!")
+
+            text("Для не шарящих, есть спец-кнопки:")
+            button("Ginhub Issues") { openUrl("https://www.google.com/search?q=HollowHorizon+boosty") }
         }
 
         br()
