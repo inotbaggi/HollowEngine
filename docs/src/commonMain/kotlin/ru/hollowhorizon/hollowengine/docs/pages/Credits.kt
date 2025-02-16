@@ -6,10 +6,8 @@ import de.fabmax.kool.math.Vec2f
 import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.pipeline.Texture2d
 import de.fabmax.kool.util.Color
-import ru.hollowhorizon.hollowengine.docs.Header
-import ru.hollowhorizon.hollowengine.docs.divide
+import ru.hollowhorizon.hollowengine.docs.*
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
-import ru.hollowhorizon.hollowengine.docs.text
 
 object Credits: Composable {
     enum class Author(val nick: String, val color: String) {
@@ -79,6 +77,8 @@ object Credits: Composable {
             Author.UNKNOWN -> {
                 text("Может это будешь ты?")
                 text("Тебе всего-то нужно принести в доки многа контента (не всё подряд, что потребуют лентяи), а только реально важное :D")
+                text("А может я шучу?)")
+                text("А может - пошёл я?!")
             }
         }
     }
