@@ -1,12 +1,12 @@
-package ru.hollowhorizon.hollowengine.docs.pages
+package ru.hollowhorizon.hollowengine.docs.pages.testing
 
-import de.fabmax.kool.modules.ui2.*
-import de.fabmax.kool.modules.ui2.Grow.Companion.Std
+import de.fabmax.kool.modules.ui2.Composable
+import de.fabmax.kool.modules.ui2.UiScope
 import ru.hollowhorizon.hollowengine.docs.*
 
-object TestPage : Composable {
+object TestFont : Composable {
     override fun UiScope.compose() {
-        var tableTypes = TableType.NOTE
+        br()
 
         text("test text"); text("тест текст")
         br()
@@ -18,9 +18,6 @@ object TestPage : Composable {
             italic = true
         )
 
-        divide()
-
-        text("Тестовое картинка")
-        title("test_title")
+        br()
     }
 }
