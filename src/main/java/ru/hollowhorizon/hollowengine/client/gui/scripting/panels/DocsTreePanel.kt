@@ -4,8 +4,9 @@ import de.fabmax.kool.modules.ui2.UiScope
 import de.fabmax.kool.modules.ui2.docking.Dock
 import ru.hollowhorizon.hollowengine.client.gui.docs.DocsNode
 import ru.hollowhorizon.hollowengine.client.gui.scripting.FileNode
+import ru.hollowhorizon.hollowengine.docs.pages.Credits
 import ru.hollowhorizon.hollowengine.docs.pages.TestPage
-import ru.hollowhorizon.hollowengine.docs.pages.WelcomePage
+import ru.hollowhorizon.hollowengine.docs.pages.Welcome
 
 class DocsTreePanel(dock: Dock) : DockPanel("hollowengine.gui.ide.docs", dock) {
     override val icon = "hollowengine:textures/gui/icons/docs.png"
@@ -16,7 +17,9 @@ class DocsTreePanel(dock: Dock) : DockPanel("hollowengine.gui.ide.docs", dock) {
 
     val docsTree = DocsNode("HollowEngine", "").apply {
         isFolder = true
-        children += DocsNode("welcome", WelcomePage)
+        children += DocsNode("welcome", Welcome)
+
+        children += DocsNode("credits", Credits)
 
         children += DocsNode("test", TestPage)
     }.resize()
