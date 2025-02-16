@@ -50,9 +50,8 @@ object Credits: Composable {
                 .selectedIndex(selectIndex)
                 .backgroundColor(Color(authorSelect.color))
                 .onItemSelected {
-                    authorSelect = authors[it]
                     selectIndex = it
-                    surface.triggerUpdate()
+                    authorSelect = authors[it]
                 }
                 .size(Grow.Std, FitContent)
 
