@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.minecraft.Util
 import org.apache.logging.log4j.LogManager
 import ru.hollowhorizon.hc.api.HollowMod
 import ru.hollowhorizon.hc.client.kool.KoolManager
@@ -15,6 +16,8 @@ import ru.hollowhorizon.hollowengine.common.scripting.core.example.HollowScript
 import ru.hollowhorizon.hollowengine.common.scripting.core.setupScripting
 import ru.hollowhorizon.hollowengine.common.scripting.events.loadEvents
 
+import ru.hollowhorizon.hollowengine.docs.OPEN_URL
+
 @HollowMod
 object HollowEngine {
     const val MODID = "hollowengine"
@@ -22,6 +25,8 @@ object HollowEngine {
     val config by hollowConfig(::EngineConfig, "hollowengine")
 
     init {
+        OPEN_URL = { Util.getPlatform().openUri(it) }
+
         setupScripting()
 
         runBlocking {

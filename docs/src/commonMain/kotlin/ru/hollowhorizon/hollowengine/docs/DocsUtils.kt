@@ -11,7 +11,6 @@ import de.fabmax.kool.pipeline.TextureProps
 import de.fabmax.kool.util.*
 import de.fabmax.kool.util.MsdfFont.Companion.ITALIC_STD
 import de.fabmax.kool.util.MsdfFont.Companion.MSDF_TEX_PROPS
-import de.fabmax.kool.util.MsdfFont.Companion.WEIGHT_BOLD
 import de.fabmax.kool.util.MsdfFont.Companion.WEIGHT_LIGHT
 import kotlinx.serialization.json.Json
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
@@ -30,7 +29,7 @@ suspend fun loadResources() {
     HACK_FONT = MsdfFontData(msdfMap, fontInfo)
 }
 
-enum class Header(val fontSize: Float) { H1(16f), H2(14f), H3(12f), H4(10f), H5(8f), H6(6f) }
+enum class Header(val fontSize: Float) { H1(14f), H2(12f), H3(10f), H4(8f), H5(6f), H6(4f) }
 
 fun UiScope.text(
     text: String,
@@ -40,7 +39,6 @@ fun UiScope.text(
     italic: Boolean = false,
     margin: Boolean = true,
 ): UiScope = Text(text) {
-
     val font = MsdfFont(
         HACK_FONT,
         sizePts = header.fontSize,
@@ -56,26 +54,26 @@ fun UiScope.text(
         .isWrapText(true)
 }
 
-fun UiScope.divide(color: Color = Color.WHITE) =
-    Box { modifier.size(Grow.Std, sizes.borderWidth).backgroundColor(color).margin(sizes.gap) }
-
+fun UiScope.divide(color: Color = Color.WHITE) = Box { modifier.size(Grow.Std, sizes.borderWidth).backgroundColor(color).margin(sizes.gap) }
 fun UiScope.br() = Box { modifier.size(Grow.Std, 4.dp).margin(sizes.gap) }
 
 fun UiScope.title(id: String = "null_title") = Image(remember {
     Texture2d { Assets.loadImage2d("hollowengine:docs/titles/$id.png").getOrThrow() }
 }) {
     val shader = BlurImageShader()
-    modifier.imageSize(ImageSize.FitContent).alignX(AlignmentX.Center)
+
+    modifier
+        .imageSize(ImageSize.FitContent)
+        .alignX(AlignmentX.Center)
         .size(Grow(0.9f, Grow.Std), FitContent)
         .customShader(shader)
-
-    modifier.onPositioned {
-        modifier.imageProvider?.getTexture(uiNode.innerWidthPx, uiNode.innerHeightPx)?.let {
-            shader.image = it
-            shader.resolution = Vec2f(uiNode.innerWidthPx, uiNode.innerHeightPx)
-            shader.power = 0.15f
+        .onPositioned {
+            modifier.imageProvider?.getTexture(uiNode.innerWidthPx, uiNode.innerHeightPx)?.let {
+                shader.image = it
+                shader.resolution = Vec2f(uiNode.innerWidthPx, uiNode.innerHeightPx)
+                shader.power = 0.1f
+            }
         }
-    }
 }
 
 enum class TableType(val bg: String, val border: String, val icon: String) {
@@ -92,23 +90,20 @@ inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Uni
             .align(AlignmentX.Center)
             .backgroundColor(Color(type.bg))
             .margin(sizes.largeGap)
-            .border(RectBorder(Color(type.border), sizes.borderWidth))
+            .border(RectBorder(Color(type.border), sizes.borderWidth + 1.dp))
             .width(Grow.Std)
 
         Row {
-            modifier.align(AlignmentX.Center, AlignmentY.Top).margin(sizes.gap)
+            modifier
+                .align(AlignmentX.Center, AlignmentY.Top)
+                .margin(sizes.gap)
 
-            Image(loadImage("icons/table_${type.icon}.png")) {
-                modifier.tint(Color(type.border)).margin(sizes.gap).size(16.dp, 16.dp)
-            }
-            Text(title) { modifier.alignY(AlignmentY.Center) }
-            Image(loadImage("icons/table_${type.icon}.png")) {
-                modifier.tint(Color(type.border)).margin(sizes.gap).size(16.dp, 16.dp)
-            }
+            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(24.dp, 24.dp) }
+            Text(title) { modifier.alignY(AlignmentY.Center).font(MsdfFont(HACK_FONT, sizePts = 14f)) }
+            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(24.dp, 24.dp) }
         }
         divide(Color(type.border))
         body()
-        br()
     }
 }
 
@@ -121,35 +116,9 @@ fun UiScope.loadImage(path: String) = remember {
     }
 }
 
-// Дорогуша, давай так. Я если захочу какой-то цвет, то ты перееводишь его сразу в HEX формат, либо в RGB, хорошо?)
-// - Или сразу в RGB, но в HEX формате.
-// Не-не-не. Именно ЛИБО в RGB, ЛИБО в HEX, окей?
-// - Или сразу в RGB, но в HEX формате.
-// Ну нет.
-// - Дорогуша, давай так.
-// Спасибо, ты лучшая IDEA
-// Окей, тогда как будет "Красный цвет" в HEX формате?
-// - Красный цвет в HEX формате.
-// Да, как, напиши!
-// - Красный цвет в HEX формате.
-// Да-да.. красный..
-// - Красный цвет в HEX формате.
-// Да, как, напиши!
-// - Красный цвет в HEX формате.
-// Ну ты же можешь, давай
-// - Красный цвет в HEX формате.
-// Ну HEX-формат, это который: #RRGGBB, поняла?
-// - Красный цвет в HEX формате.
-// Да, в HEX-формате, как будет "Красный цвет"?!
-// ! FF0000 <- ВОт
-// - Красный цвет в HEX формате.
-// Ладно, может ты и умеешь читать мои мысли, но видимо не совсем...
-// - Красный цвет в HEX формате.
-
 enum class ButtonType(val color: String, val border: String) {
-    DEFAULT("ff0000", "00ff00"),
-    DIR("00ff00", "0000ff"),
-    LINK("0000ff", "ff0000")
+    DEFAULT("D4AF37", "B68F2D"),
+    LINK("5DADE2", "3498DB")
 }
 fun UiScope.button(
     text: String = "",
@@ -157,6 +126,8 @@ fun UiScope.button(
     action: () -> Unit
 ) = Button(text) {
     modifier
+        .font(MsdfFont(HACK_FONT))
+        .margin(4.dp)
         .colors(buttonColor = Color(type.color), buttonHoverColor = Color(type.border))
         .onClick { action() }
 }

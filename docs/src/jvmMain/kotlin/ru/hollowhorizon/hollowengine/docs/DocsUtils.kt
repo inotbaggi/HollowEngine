@@ -1,6 +1,8 @@
+@file:JvmName("DocsUtilsJVM")
+
 package ru.hollowhorizon.hollowengine.docs
 
-import java.awt.Desktop
-import java.net.URI
+lateinit var OPEN_URL: (String) -> Unit
 
-actual fun openUrl(url: String) { Desktop.getDesktop().browse(URI(url)) }
+//actual fun openUrl(url: String) { Desktop.getDesktop().browse(URI(url)) }
+actual fun openUrl(url: String) { OPEN_URL(url) }
