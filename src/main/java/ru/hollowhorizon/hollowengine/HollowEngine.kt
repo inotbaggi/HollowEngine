@@ -1,6 +1,7 @@
 package ru.hollowhorizon.hollowengine
 
 import com.mojang.blaze3d.systems.RenderSystem
+import de.fabmax.kool.util.launchOnMainThread
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -17,6 +18,7 @@ import ru.hollowhorizon.hollowengine.common.scripting.core.setupScripting
 import ru.hollowhorizon.hollowengine.common.scripting.events.loadEvents
 
 import ru.hollowhorizon.hollowengine.docs.OPEN_URL
+import ru.hollowhorizon.hollowengine.docs.loadResources
 
 @HollowMod
 object HollowEngine {
@@ -25,6 +27,8 @@ object HollowEngine {
     val config by hollowConfig(::EngineConfig, "hollowengine")
 
     init {
+        launchOnMainThread { loadResources() }
+
         OPEN_URL = { Util.getPlatform().openUri(it) }
 
         setupScripting()
