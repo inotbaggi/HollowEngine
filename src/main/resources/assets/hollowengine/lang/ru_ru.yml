@@ -42,6 +42,9 @@ hollowengine:
     docs:
       welcome: Добро пожаловать
       credits: Авторы
+      begin:
+        .: Начало
+        directory: Директория
       test: TestPage
 
 

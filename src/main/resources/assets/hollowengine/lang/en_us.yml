@@ -41,6 +41,9 @@ hollowengine:
     docs:
       welcome: Welcome
       credits: Credits
+      begin:
+        .: Begin
+        directory: Directory
       test: TestPage
 
   hud:

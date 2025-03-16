@@ -4,7 +4,7 @@ import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.util.Color
 import ru.hollowhorizon.hollowengine.docs.*
 
-object Welcome : Composable {
+object WelcomePage : Composable {
     override fun UiScope.compose() {
         text("Добро пожаловать", Header.H1)
         text("на официальную документацию по моду", Header.H2)

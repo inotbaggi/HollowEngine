@@ -34,7 +34,8 @@ enum class Header(val fontSize: Float) { H1(14f), H2(12f), H3(10f), H4(8f), H5(6
 fun UiScope.text(
     text: String,
     header: Header = Header.H4,
-    alignment: AlignmentX = AlignmentX.Center,
+    alignmentX: AlignmentX = AlignmentX.Center,
+    alignmentY: AlignmentY = AlignmentY.Top,
     bold: Boolean = false,
     italic: Boolean = false,
     margin: Boolean = true,
@@ -47,8 +48,8 @@ fun UiScope.text(
     )
 
     modifier.font(font)
-        .align(alignment)
-        .textAlignX(alignment)
+        .align(alignmentX, alignmentY)
+        .textAlignX(alignmentX)
         .margin(if (margin) sizes.gap else 0.dp, sizes.smallGap)
         .width(Grow(1f))
         .isWrapText(true)
@@ -57,7 +58,7 @@ fun UiScope.text(
 fun UiScope.divide(color: Color = Color.WHITE) = Box { modifier.size(Grow.Std, sizes.borderWidth).backgroundColor(color).margin(sizes.gap) }
 fun UiScope.br() = Box { modifier.size(Grow.Std, 4.dp).margin(sizes.gap) }
 
-fun UiScope.title(id: String = "null_title") = Image(remember {
+fun UiScope.title(id: String = "no_title") = Image(remember {
     Texture2d { Assets.loadImage2d("hollowengine:docs/titles/$id.png").getOrThrow() }
 }) {
     val shader = BlurImageShader()
@@ -98,9 +99,9 @@ inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Uni
                 .align(AlignmentX.Center, AlignmentY.Top)
                 .margin(sizes.gap)
 
-            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(24.dp, 24.dp) }
+            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(sizes.gap * 2, sizes.gap * 2) }
             Text(title) { modifier.alignY(AlignmentY.Center).font(MsdfFont(HACK_FONT, sizePts = 14f)) }
-            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(24.dp, 24.dp) }
+            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(sizes.gap * 2, sizes.gap * 2) }
         }
         divide(Color(type.border))
         body()
