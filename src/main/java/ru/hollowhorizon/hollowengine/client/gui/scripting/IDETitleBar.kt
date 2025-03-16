@@ -12,7 +12,7 @@ object IDETitleBar : Composable {
     var currentItemIndex = 0
 
     override fun UiScope.compose() {
-        Row(width = Grow.Std, height = 10.dp) {
+        Row(width = Grow.Std, height = 14.dp) {
             modifier.padding(horizontal = sizes.smallGap*0.5f)
             modifier.background(
                 RectGradientBackground(colors.background.mulRgb(2f), colors.background, 0.dp, 20.dp, 500.dp, 500.dp)
@@ -40,6 +40,7 @@ object IDETitleBar : Composable {
                         .background(RectGradientBackground(colors.background.mulRgb(2f), colors.background, 0.dp, 20.dp, 500.dp, 500.dp))
                         .selectedIndex(currentItemIndex)
                         .onItemSelected { currentItemIndex = it }
+                        .margin(0.dp, 1.dp)
 
                 }
                 Divider()

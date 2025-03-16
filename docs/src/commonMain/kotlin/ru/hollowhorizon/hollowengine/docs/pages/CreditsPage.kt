@@ -9,7 +9,7 @@ import de.fabmax.kool.util.Color
 import ru.hollowhorizon.hollowengine.docs.*
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
 
-object Credits: Composable {
+object CreditsPage: Composable {
     enum class Author(val nick: String, val color: String) {
         NONE("NONE_AUTHOR_SELECTED", "777777"),
         BENDY659("_BENDY659_", "ad0e0e"),
@@ -17,21 +17,16 @@ object Credits: Composable {
         UNKNOWN("Неизвестный", "551270")
     }
     private var authorSelect = Author.NONE
-
-    private val authors = listOf(
-        Author.NONE,
-        Author.THEHOLLOWHORIZON,
-        Author.BENDY659,
-        Author.UNKNOWN
-    )
-    private val avatars = listOf(
-        Texture2d { Assets.loadImage2d("hollowengine:docs/authors/none.png").getOrThrow() },
-        Texture2d { Assets.loadImage2d("hollowengine:docs/authors/thehollowhorizon.png").getOrThrow() },
-        Texture2d { Assets.loadImage2d("hollowengine:docs/authors/bendy659.png").getOrThrow() },
-        Texture2d { Assets.loadImage2d("hollowengine:docs/authors/unknown.png").getOrThrow() }
-    )
+    private val authors = listOf(Author.NONE, Author.THEHOLLOWHORIZON, Author.BENDY659, Author.UNKNOWN)
 
     override fun UiScope.compose() {
+        val avatars = listOf(
+            loadImage("hollowengine:docs/authors/none.png"),
+            loadImage("hollowengine:docs/authors/thehollowhorizon.png"),
+            loadImage("hollowengine:docs/authors/bendy659.png"),
+            loadImage("hollowengine:docs/authors/unknown.png")
+        )
+
         text("Над документацией работали", Header.H1)
 
         // ==== //
