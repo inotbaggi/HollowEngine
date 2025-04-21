@@ -5,12 +5,9 @@ import de.fabmax.kool.loadBlob
 import de.fabmax.kool.loadImage2d
 import de.fabmax.kool.math.Vec2f
 import de.fabmax.kool.modules.ui2.*
-import de.fabmax.kool.pipeline.SamplerSettings
-import de.fabmax.kool.pipeline.Texture2d
-import de.fabmax.kool.pipeline.TextureProps
+import de.fabmax.kool.pipeline.*
 import de.fabmax.kool.util.*
 import de.fabmax.kool.util.MsdfFont.Companion.ITALIC_STD
-import de.fabmax.kool.util.MsdfFont.Companion.MSDF_TEX_PROPS
 import de.fabmax.kool.util.MsdfFont.Companion.WEIGHT_LIGHT
 import kotlinx.serialization.json.Json
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
@@ -23,8 +20,8 @@ suspend fun loadResources() {
     val fontInfo = json.decodeFromString<MsdfMeta>(
         Assets.loadBlob("hollowengine:fonts/hack.json").getOrThrow().decodeToString()
     )
-    val msdfMap = Texture2d(MSDF_TEX_PROPS, "MsdfFont:${fontInfo.name}") {
-        Assets.loadImage2d("hollowengine:fonts/hack.png", MSDF_TEX_PROPS).getOrThrow()
+    val msdfMap = Texture2d(TexFormat.RGBA, MipMapping.Off, SamplerSettings(), "MsdfFont:${fontInfo.name}") {
+        Assets.loadImage2d("hollowengine:fonts/hack.png").getOrThrow()
     }
     HACK_FONT = MsdfFontData(msdfMap, fontInfo)
 }
@@ -109,11 +106,8 @@ inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Uni
 }
 
 fun UiScope.loadImage(path: String) = remember {
-    Texture2d {
-        Assets.loadImage2d(
-            "hollowengine:docs/$path",
-            TextureProps(defaultSamplerSettings = SamplerSettings().nearest())
-        ).getOrThrow()
+    Texture2d(TexFormat.RGBA, MipMapping.Off, SamplerSettings()) {
+        Assets.loadImage2d("hollowengine:docs/$path").getOrThrow()
     }
 }
 
