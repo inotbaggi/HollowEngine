@@ -81,7 +81,7 @@ open class FileNode(val treeName: String, val treePath: String) : Composable {
 
     override fun UiScope.compose() {
         modifier.margin(sizes.smallGap)
-        val filePopup = remember(::FilePopup)
+        val filePopup = remember(::createFilePopup)
 
         LazyColumn(
             containerModifier = { it.backgroundColor(null) },
@@ -104,6 +104,8 @@ open class FileNode(val treeName: String, val treePath: String) : Composable {
 
     }
 
+    protected open fun createFilePopup(): Popup = FilePopup()
+
     protected open fun UiScope.sceneObjectItem(item: FileNode) {
         modifier
             .onClick { evt ->
@@ -111,11 +113,7 @@ open class FileNode(val treeName: String, val treePath: String) : Composable {
                     if (item.isFolder) {
                         item.toggleExpanded()
                     } else {
-                        val screen = Minecraft.getInstance().screen as? ScriptingEnvironmentScreen ?: return@onClick
-                        val file = IdeContent.files[item.treePath]
-
-                        if (file == null) RequestFilePacket(item.treePath).send()
-                        else screen.dock.getLeafAtPath("0/1")?.bringToTop(file.dockable)
+                        openFile(item)
                     }
                 }
             }
@@ -127,6 +125,14 @@ open class FileNode(val treeName: String, val treePath: String) : Composable {
 
         modifier.background(RoundRectBackground(bgColor, sizes.smallGap))
         sceneObjectLabel(item, fgColor)
+    }
+
+    protected open fun openFile(item: FileNode) {
+        val screen = Minecraft.getInstance().screen as? ScriptingEnvironmentScreen ?: return
+        val file = IdeContent.files[item.treePath]
+
+        if (file == null) RequestFilePacket(item.treePath).send()
+        else screen.dock.getLeafAtPath("0/1")?.bringToTop(file.dockable)
     }
 
     protected fun UiScope.sceneObjectDndHandler(item: FileNode) {
