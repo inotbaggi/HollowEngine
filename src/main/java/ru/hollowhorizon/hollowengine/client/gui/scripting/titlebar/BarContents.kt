@@ -69,7 +69,7 @@ fun rightBarContents(event: TitleBarCreationEvent.End) = event.append {
         comboBox("Empty", items.map { it.second }, itemIndex)
     }
 
-    if(itemIndex.use() != -1) Box {
+    Box {
         modifier.padding(horizontal = sizes.smallGap)
             .background(
                 RoundRectBackground(
