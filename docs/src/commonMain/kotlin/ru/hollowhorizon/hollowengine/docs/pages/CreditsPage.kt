@@ -21,10 +21,10 @@ object CreditsPage: Composable {
 
     override fun UiScope.compose() {
         val avatars = listOf(
-            loadImage("hollowengine:docs/authors/none.png"),
-            loadImage("hollowengine:docs/authors/thehollowhorizon.png"),
-            loadImage("hollowengine:docs/authors/bendy659.png"),
-            loadImage("hollowengine:docs/authors/unknown.png")
+            loadImage("authors/none.png"),
+            loadImage("authors/thehollowhorizon.png"),
+            loadImage("authors/bendy659.png"),
+            loadImage("authors/unknown.png")
         )
 
         text("Над документацией работали", Header.H1)
