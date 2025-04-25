@@ -53,7 +53,8 @@ object HollowEngine {
 class EngineConfig : HollowConfig() {
     @SerialName("ide_config")
     var ideConfig = IDEConfig()
-    var docsDebug = DocsDebugConfig()
+    @SerialName("docs_config")
+    var docsDebug = DocsConfig()
 
     @Serializable
     class IDEConfig {
@@ -63,7 +64,7 @@ class EngineConfig : HollowConfig() {
     }
 
     @Serializable
-    class DocsDebugConfig {
+    class DocsConfig {
         var debugPages = false
     }
 }

@@ -2,12 +2,10 @@ package ru.hollowhorizon.hollowengine.docs.pages.testing
 
 import de.fabmax.kool.modules.ui2.Composable
 import de.fabmax.kool.modules.ui2.UiScope
-import ru.hollowhorizon.hollowengine.docs.Header
-import ru.hollowhorizon.hollowengine.docs.br
-import ru.hollowhorizon.hollowengine.docs.divide
-import ru.hollowhorizon.hollowengine.docs.text
 
 object TestFontPage: Composable {
+    override fun UiScope.compose() {}
+    /*
     override fun UiScope.compose() {
         br()
 
@@ -26,4 +24,5 @@ object TestFontPage: Composable {
 
         br()
     }
+     */
 }

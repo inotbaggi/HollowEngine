@@ -16,7 +16,6 @@ object TestImages: Composable {
 
         br()
 
-        text("Basic image")
         Image(img) {
             modifier
                 .imageSize(ImageSize.FitContent)
@@ -26,7 +25,6 @@ object TestImages: Composable {
 
         divide()
 
-        text("Shader fade image")
         Image(img) {
             val shader = BlurImageShader()
 
@@ -46,7 +44,6 @@ object TestImages: Composable {
 
         divide()
 
-        text("Shader rotation image | NOT WORKING")
         Image(imgRot) {
             modifier
                 .imageSize(ImageSize.FitContent)

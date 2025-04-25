@@ -26,32 +26,6 @@ suspend fun loadResources() {
     HACK_FONT = MsdfFontData(msdfMap, fontInfo)
 }
 
-enum class Header(val fontSize: Float) { H1(20f), H2(18f), H3(14f), H4(12f), H5(10f), H6(8f) }
-
-fun UiScope.text(
-    text: String,
-    header: Header = Header.H4,
-    alignmentX: AlignmentX = AlignmentX.Center,
-    alignmentY: AlignmentY = AlignmentY.Top,
-    bold: Boolean = false,
-    italic: Boolean = false,
-    margin: Boolean = true,
-): UiScope = Text(text) {
-    val font = MsdfFont(
-        HACK_FONT,
-        sizePts = header.fontSize,
-        weight = if (bold) WEIGHT_LIGHT else 0f,
-        italic = if (italic) ITALIC_STD else 0f
-    )
-
-    modifier.font(font)
-        .align(alignmentX, alignmentY)
-        .textAlignX(alignmentX)
-        .margin(if (margin) sizes.gap else 0.dp, sizes.smallGap)
-        .width(Grow(1f))
-        .isWrapText(true)
-}
-
 fun UiScope.divide(color: Color = Color.WHITE) = Box { modifier.size(Grow.Std, sizes.borderWidth).backgroundColor(color).margin(sizes.gap) }
 fun UiScope.br() = Box { modifier.size(Grow.Std, 4.dp).margin(sizes.gap) }
 fun UiScope.divbr(color: Color = Color.WHITE) { br(); divide(color); br() }
@@ -76,12 +50,12 @@ fun UiScope.title(id: String = "no_title", borderBlendPower: Float = 0.1f) = Ima
 }
 
 enum class TableType(val bg: String, val border: String, val icon: String) {
-    NOTE("878787", "d4d4d4", "note"),
-    TIP("438c34", "73d160", "tip"),
-    INFO("3c86a3", "5fafcf", "info"),
-    WARN("8a6932", "e8c268", "warn"),
-    ERR("913131", "e84646", "err"),
-    SPOILER("", "", "spoiler")
+    NOTE("878787", "D4D4D4", "note"),
+    TIP("438C34", "73D160", "tip"),
+    INFO("3C86a3", "5FAFCF", "info"),
+    WARN("8a6932", "E8C268", "warn"),
+    ERR("913131", "E84646", "err"),
+    SPOILER("6C348C", "A24FD1", "spoiler")
 }
 
 inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Unit) {
@@ -116,7 +90,7 @@ fun UiScope.loadImage(path: String) = remember {
 enum class ButtonType(val basic: String, val hover: String) {
     DEFAULT("D4AF37", "B68F2D"),
     LINK("5DADE2", "3498DB"),
-    SPOILER("", "")
+    SPOILER("793EDE", "9A5EFF")
 }
 fun UiScope.button(
     text: String = "",
@@ -133,12 +107,16 @@ expect fun openUrl(url: String)
 
 fun UiScope.spoiler(button: String = "Spoiler", hiddenVar: MutableStateValue<Boolean>, hidendCotent: UiScope.() -> Unit) {
     if(!hiddenVar.value)
-        button(button) { hiddenVar.value = true }
+        Box { modifier.align(AlignmentX.Center, AlignmentY.Center)
+            button(button, ButtonType.SPOILER) { hiddenVar.value = true }
+        }
     else {
         table(button, TableType.SPOILER) {
             hidendCotent()
             divbr(Color(TableType.SPOILER.border))
-            button("Скрыть") { hiddenVar.value = false }
+            Box { modifier.align(AlignmentX.Center, AlignmentY.Bottom)
+                button("Скрыть", ButtonType.SPOILER) { hiddenVar.value = false }
+            }
         }
     }
 }
