@@ -1,14 +1,15 @@
 package ru.hollowhorizon.hollowengine.docs.utils
 
-object TextParser {
-    /**
-     * Модель данных
-     */
-    sealed class ParserElement {
-        data class Text(val text: String): ParserElement()
-        data class Tag(val name: String, val child: List<ParserElement>): ParserElement()
-    }
+import de.fabmax.kool.modules.ui2.*
+import de.fabmax.kool.util.Color
+import de.fabmax.kool.util.MsdfFont
+import de.fabmax.kool.util.MsdfFont.Companion.ITALIC_STD
+import de.fabmax.kool.util.MsdfFont.Companion.WEIGHT_LIGHT
+import de.fabmax.kool.util.MsdfFontData
+import ru.hollowhorizon.hollowengine.docs.HACK_FONT
 
+object TextParser {
+    // FUN :) //
     /**
      * Это ребёнок
      */
@@ -27,205 +28,137 @@ object TextParser {
         child.boom()
     }
 
-    /**
-     * Парсинг текста на токены
-     */
-    private fun parsingText(input: String): List<ParserElement> {
-        val regex: Regex = Regex("""<(/?)(\w+)(.*?)>""")
-        val result: MutableList<ParserElement> = mutableListOf()
-        val stack: ArrayDeque<MutableList<ParserElement>> = ArrayDeque()
-        var cur: Int = 0 // Текущее положение курсора в строке
+    // SERIOUSLY >:| //
+    private val headerTags = mapOf(
+        "h1" to Header.H1,
+        "h2" to Header.H2,
+        "h3" to Header.H3,
+        "h4" to Header.H4,
+        "h5" to Header.H5,
+        "h6" to Header.H6
+    )
 
-        fun appendText(text: String) {
-            if(text.isNotBlank()) {
-                if(stack.isNotEmpty())
-                    stack.last() += ParserElement.Text(text)
-                else
-                    result += ParserElement.Text(text)
+    data class TextFormat(
+        val text: String,
+        val font: MsdfFontData = HACK_FONT,
+        val header: Header = Header.H4,
+        val bold: Boolean = false,
+        val italic: Boolean = false,
+        val textAlignX: AlignmentX = AlignmentX.Start,
+        val textAlignY: AlignmentY = AlignmentY.Center,
+        val textColor: Color = Color.WHITE
+    )
+
+    private fun textParser(input: String): List<TextFormat> {
+        val regex = Regex("""<(/?)(\w+)(?:=([^>]+))?>""")
+        val result = mutableListOf<TextFormat>()
+        var currentFormat = TextFormat(text = "")
+        val formatStack = ArrayDeque<TextFormat>()
+
+        var lastIndex = 0
+        regex.findAll(input).forEach { match ->
+            val start = match.range.first
+            val end = match.range.last + 1
+
+            // Текст перед тегом
+            val rawText = input.substring(lastIndex, start)
+            if (rawText.isNotEmpty()) {
+                result += currentFormat.copy(text = rawText)
+            }
+
+            val isClosing = match.groupValues[1].isNotEmpty()
+            val tagName = match.groupValues[2].lowercase()
+            val tagArg = match.groupValues.getOrNull(3)
+
+            currentFormat = updateFormat(tagName, tagArg, isClosing, currentFormat, formatStack)
+            lastIndex = end
+        }
+
+        // Остаточный текст
+        if (lastIndex < input.length) {
+            val remainingText = input.substring(lastIndex)
+            if (remainingText.isNotEmpty()) {
+                result += currentFormat.copy(text = remainingText)
             }
         }
-
-        regex.findAll(input).forEach {
-            val s = it.range.first
-            val e = it.range.last + 1
-            val tBef = input.substring(cur, s)
-            appendText(tBef)
-
-            val (closing, tag) = it.groupValues[1].isNotEmpty() to it.groupValues[2].lowercase()
-
-            cur = e // Смещение курсора
-
-            if(closing) { // Если тег - закрывающий
-                val child = stack.removeLastOrNull() ?: emptyList()
-
-                if(stack.isNotEmpty())
-                    stack.last() += ParserElement.Tag(tag, child)
-                else
-                    result += ParserElement.Tag(tag, child)
-            } else // Если это - открывающий
-                stack.addLast(mutableListOf())
-
-            appendText(input.substring(cur))
-        }
-
-        while(stack.isNotEmpty()) result.addAll(stack.removeLast())
 
         return result
     }
-}
 
-/*
 
-// Простой HTML-подобный парсер rich-текста
-fun parseRichText(input: String): List<RichTextElement> {
-
-    for (match in regex.findAll(input)) {
-        val start = match.range.first
-        val end = match.range.last + 1
-        val textBefore = input.substring(lastIndex, start)
-        appendText(textBefore)
-
-        val closing = match.groupValues[1].isNotEmpty()
-        val tagName = match.groupValues[2].lowercase()
-        val attributes = match.groupValues[3] // атрибуты тега, если нужны для расширений
-
-        lastIndex = end
-
-        when {
-            closing -> {
-                val content = stack.removeLastOrNull()
-                if (content != null && content.first == tagName) {
-                    val tag = RichTextElement.Tag(tagName, content.second)
-                    if (stack.isNotEmpty()) {
-                        stack.last().second.add(tag)
-                    } else {
-                        result.add(tag)
+    private fun updateFormat(
+        tag: String,
+        arg: String?,
+        closing: Boolean,
+        current: TextFormat,
+        stack: ArrayDeque<TextFormat>
+    ): TextFormat {
+        return when (tag) {
+            "bold" -> {
+                if (closing) stack.removeLastOrNull() ?: current
+                else {
+                    stack.addLast(current)
+                    current.copy(bold = true)
+                }
+            }
+            "italic" -> {
+                if (closing) stack.removeLastOrNull() ?: current
+                else {
+                    stack.addLast(current)
+                    current.copy(italic = true)
+                }
+            }
+            "align" -> {
+                if (closing) stack.removeLastOrNull() ?: current
+                else {
+                    stack.addLast(current)
+                    val alignX = when (arg?.lowercase()) {
+                        "c" -> AlignmentX.Center
+                        "r" -> AlignmentX.End
+                        "l" -> AlignmentX.Start
+                        else -> current.textAlignX
                     }
+                    current.copy(textAlignX = alignX)
                 }
             }
-
-            tagName == "br" -> {
-                result.add(RichTextElement.LineBreak)
+            "color" -> {
+                if (closing) stack.removeLastOrNull() ?: current
+                else {
+                    stack.addLast(current)
+                    val color = arg?.let { Color(it) } ?: current.textColor
+                    current.copy(textColor = color)
+                }
             }
-
-            tagName == "divide" -> {
-                result.add(RichTextElement.Divider)
-            }
-
             else -> {
-                stack.addLast(tagName to mutableListOf())
+                val header = headerTags[tag]
+                if (header != null) {
+                    if (closing) stack.removeLastOrNull() ?: current
+                    else {
+                        stack.addLast(current)
+                        current.copy(header = header)
+                    }
+                } else current
             }
         }
     }
 
-    appendText(input.substring(lastIndex))
-    while (stack.isNotEmpty()) {
-        result.addAll(stack.removeLast().second)
-    }
-
-    return result
-}
-
-
-// Объединить все текстовые элементы в одну строку
-fun List<RichTextElement>.joinText(): String =
-    joinToString("") { if (it is RichTextElement.Text) it.text else "" }
-
-typealias RichTextHandler = UiScope.(tag: RichTextElement.Tag, context: RichTextRenderContext) -> Unit
-
-class RichTextRenderContext(
-    val handlers: Map<String, RichTextHandler>,
-    val defaultAlignX: AlignmentX,
-    val defaultAlignY: AlignmentY
-) {
-    fun renderIn(scope: UiScope, elements: List<RichTextElement>) {
-        for (element in elements) {
-            when (element) {
-                is RichTextElement.Text -> scope.text(element.text, alignmentX = defaultAlignX)
-                is RichTextElement.LineBreak -> scope.Box { modifier.height(4.dp).width(Grow(1f)) }
-
-                is RichTextElement.Divider -> scope.Box(Grow.Std) {
-                    modifier
-                        .size(Grow(1f), 1.dp)
-                        .backgroundColor(Color.LIGHT_GRAY)
-                        .margin(vertical = 4.dp)
-                }
-
-                is RichTextElement.Tag -> renderTagIn(scope, element)
+    fun UiScope.text(text: String) {
+        textParser(text).forEach {
+            Text(it.text) {
+                modifier
+                    .font(MsdfFont(
+                        data = it.font,
+                        sizePts = it.header.fontSize,
+                        weight = if(it.bold) WEIGHT_LIGHT else 0f,
+                        italic = if(it.italic) ITALIC_STD else 0f
+                    ))
+                    .textAlign(it.textAlignX, it.textAlignY)
+                    .textColor(it.textColor)
+                    .isWrapText(true)
+                    .size(Grow.Std, FitContent)
             }
         }
     }
-
-    fun renderTagIn(scope: UiScope, tag: RichTextElement.Tag) {
-        handlers[tag.name]?.invoke(scope, tag, this)
-            ?: renderIn(scope, tag.children)
-    }
-}
-
-// Text Parser
-fun UiScope.text(
-    raw: String,
-    handlers: Map<String, RichTextHandler> = defaultTagHandlers,
-    alignmentX: AlignmentX = AlignmentX.Start,
-    alignmentY: AlignmentY = AlignmentY.Top
-): UiScope {
-    val parsed = parseRichText(raw)
-    val context = RichTextRenderContext(handlers, alignmentX, alignmentY)
-
-    Column(Grow.Std) { context.renderIn(this, parsed) }
-
-    return this
-}
-
-val defaultTagHandlers: Map<String, RichTextHandler> = mapOf(
-    "center" to { tag, context ->
-        Column {
-            modifier.alignX = AlignmentX.Center
-            context.renderIn(this, tag.children)
-        }
-    },
-
-    "bold" to { tag, context ->
-        Column {
-            for (element in tag.children) {
-                if (element is RichTextElement.Text)
-                    textHelper(element.text, bold = true, alignmentX = context.defaultAlignX)
-                else if (element is RichTextElement.Tag)
-                    context.renderTagIn(this, element)
-            }
-        }
-    },
-
-    "h1" to { tag, context -> textHelper(tag.children.joinText(), header = Header.H1, alignmentX = context.defaultAlignX) },
-    "h2" to { tag, context -> textHelper(tag.children.joinText(), header = Header.H2, alignmentX = context.defaultAlignX) },
-    "h3" to { tag, context -> textHelper(tag.children.joinText(), header = Header.H3, alignmentX = context.defaultAlignX) },
-    "h4" to { tag, context -> textHelper(tag.children.joinText(), header = Header.H4, alignmentX = context.defaultAlignX) },
-    "h5" to { tag, context -> textHelper(tag.children.joinText(), header = Header.H5, alignmentX = context.defaultAlignX) },
-    "h6" to { tag, context -> textHelper(tag.children.joinText(), header = Header.H6, alignmentX = context.defaultAlignX) },
-)
-
-fun UiScope.textHelper(
-    text: String,
-    header: Header = Header.H4,
-    alignmentX: AlignmentX = AlignmentX.Center,
-    alignmentY: AlignmentY = AlignmentY.Top,
-    bold: Boolean = false,
-    italic: Boolean = false,
-    margin: Boolean = true,
-): UiScope = Text(text) {
-    val font = MsdfFont(
-        HACK_FONT,
-        sizePts = header.fontSize,
-        weight = if (bold) WEIGHT_LIGHT else 0f,
-        italic = if (italic) ITALIC_STD else 0f
-    )
-
-    modifier.font(font)
-        .align(alignmentX, alignmentY)
-        .textAlignX(alignmentX)
-        .margin(if (margin) sizes.gap else 0.dp, sizes.smallGap)
-        .width(Grow(1f))
-        .isWrapText(true)
 }
 
 enum class Header(val fontSize: Float) { H1(20f), H2(18f), H3(14f), H4(12f), H5(10f), H6(8f) }

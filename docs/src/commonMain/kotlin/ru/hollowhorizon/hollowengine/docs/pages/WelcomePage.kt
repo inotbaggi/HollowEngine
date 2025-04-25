@@ -3,7 +3,7 @@ package ru.hollowhorizon.hollowengine.docs.pages
 import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.util.Color
 import ru.hollowhorizon.hollowengine.docs.*
-import ru.hollowhorizon.hollowengine.docs.utils.text
+import ru.hollowhorizon.hollowengine.docs.utils.TextParser.text
 import kotlin.random.Random
 
 object WelcomePage : Composable {
@@ -20,14 +20,24 @@ object WelcomePage : Composable {
     val sHide0 = mutableStateOf(false)
 
     override fun UiScope.compose() {
-        text("""
+        text(
+            """
             Example text
             <h1>Example Header H1</h1>
             <h2>Header 2</h2>
             <bold>Is bold text</bold>
             <italic>Is Italyano text</italic>
             Это пипец какой красивый текст. <bold>Он будет жирным</bold>, <italic>И он будет Итальянским</italic>. И да, он в ОДНУ ПОЛОСКУ!!!
-        """.trimIndent())
+            <color=#FF00000>Этот цвет красный</color>
+            {DFdkmfmsdfsedfokesdjfjksoedfnojkesfnojkdsf <italic>DHFDSFCJOFNCONEPSADJFCPEDSAJFPCKENPDSFNPKdnfsfesrdfg rwsfgrsfgdsgerdsfgsrfgrewsf</italic>
+            """.trimIndent()
+        )
+        text(
+            """
+            Текст который написал сеньёр данюат (это пиздёшь кнч же) Но нужно проверить - <h2>Как работает TextWrap</h2>!
+            """.trimIndent()
+        )
+
     }
     /*
     override fun UiScope.compose() {

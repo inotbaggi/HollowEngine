@@ -7,8 +7,6 @@ import de.fabmax.kool.math.Vec2f
 import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.pipeline.*
 import de.fabmax.kool.util.*
-import de.fabmax.kool.util.MsdfFont.Companion.ITALIC_STD
-import de.fabmax.kool.util.MsdfFont.Companion.WEIGHT_LIGHT
 import kotlinx.serialization.json.Json
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
 
