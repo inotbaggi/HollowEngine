@@ -22,12 +22,6 @@ class DocsTreePanel(dock: Dock) : DockPanel("hollowengine.gui.ide.docs", dock) {
         isFolder = true
 
         children += DocsNode("welcome", WelcomePage)
-        children += DocsNode("credits", CreditsPage)
-        children += DocsNode("begin").apply {
-            isFolder = true
-
-            children += DocsNode("begin.directory", DirectoryPage)
-        }
 
         if(HollowEngine.config.docsDebug.debugPages)
             children += DocsNode("Testing Page", "").apply {

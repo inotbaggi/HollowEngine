@@ -26,7 +26,7 @@ suspend fun loadResources() {
     HACK_FONT = MsdfFontData(msdfMap, fontInfo)
 }
 
-enum class Header(val fontSize: Float) { H1(14f), H2(12f), H3(10f), H4(8f), H5(6f), H6(4f) }
+enum class Header(val fontSize: Float) { H1(20f), H2(18f), H3(14f), H4(12f), H5(10f), H6(8f) }
 
 fun UiScope.text(
     text: String,
@@ -54,8 +54,9 @@ fun UiScope.text(
 
 fun UiScope.divide(color: Color = Color.WHITE) = Box { modifier.size(Grow.Std, sizes.borderWidth).backgroundColor(color).margin(sizes.gap) }
 fun UiScope.br() = Box { modifier.size(Grow.Std, 4.dp).margin(sizes.gap) }
+fun UiScope.divbr(color: Color = Color.WHITE) { br(); divide(color); br() }
 
-fun UiScope.title(id: String = "no_title") = Image(remember {
+fun UiScope.title(id: String = "no_title", borderBlendPower: Float = 0.1f) = Image(remember {
     Texture2d { Assets.loadImage2d("hollowengine:docs/titles/$id.png").getOrThrow() }
 }) {
     val shader = BlurImageShader()
@@ -69,7 +70,7 @@ fun UiScope.title(id: String = "no_title") = Image(remember {
             modifier.imageProvider?.getTexture(uiNode.innerWidthPx, uiNode.innerHeightPx)?.let {
                 shader.image = it
                 shader.resolution = Vec2f(uiNode.innerWidthPx, uiNode.innerHeightPx)
-                shader.power = 0.1f
+                shader.power = borderBlendPower
             }
         }
 }
@@ -79,7 +80,8 @@ enum class TableType(val bg: String, val border: String, val icon: String) {
     TIP("438c34", "73d160", "tip"),
     INFO("3c86a3", "5fafcf", "info"),
     WARN("8a6932", "e8c268", "warn"),
-    ERR("913131", "e84646", "err")
+    ERR("913131", "e84646", "err"),
+    SPOILER("", "", "spoiler")
 }
 
 inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Unit) {
@@ -111,9 +113,10 @@ fun UiScope.loadImage(path: String) = remember {
     }
 }
 
-enum class ButtonType(val color: String, val border: String) {
+enum class ButtonType(val basic: String, val hover: String) {
     DEFAULT("D4AF37", "B68F2D"),
-    LINK("5DADE2", "3498DB")
+    LINK("5DADE2", "3498DB"),
+    SPOILER("", "")
 }
 fun UiScope.button(
     text: String = "",
@@ -123,7 +126,19 @@ fun UiScope.button(
     modifier
         .font(MsdfFont(HACK_FONT))
         .margin(4.dp)
-        .colors(buttonColor = Color(type.color), buttonHoverColor = Color(type.border))
+        .colors(buttonColor = Color(type.basic), buttonHoverColor = Color(type.hover))
         .onClick { action() }
 }
 expect fun openUrl(url: String)
+
+fun UiScope.spoiler(button: String = "Spoiler", hiddenVar: MutableStateValue<Boolean>, hidendCotent: UiScope.() -> Unit) {
+    if(!hiddenVar.value)
+        button(button) { hiddenVar.value = true }
+    else {
+        table(button, TableType.SPOILER) {
+            hidendCotent()
+            divbr(Color(TableType.SPOILER.border))
+            button("Скрыть") { hiddenVar.value = false }
+        }
+    }
+}
