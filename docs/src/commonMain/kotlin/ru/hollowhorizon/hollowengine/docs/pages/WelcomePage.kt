@@ -1,11 +1,15 @@
 package ru.hollowhorizon.hollowengine.docs.pages
 
 import de.fabmax.kool.modules.ui2.*
-import de.fabmax.kool.util.Color
-import ru.hollowhorizon.hollowengine.docs.*
-import ru.hollowhorizon.hollowengine.docs.utils.TextParser.text
-import ru.hollowhorizon.hollowengine.docs.utils.TextParser.textRich
+import ru.hollowhorizon.hollowengine.docs.utils.OldTextParser.richText
+import ru.hollowhorizon.hollowengine.docs.utils.OldTextParser.text
 import kotlin.random.Random
+
+/*
+ * Спасибо тем, кто голосовал за докив опросе, я рад за вас.
+ * Остальным - соболезную. Хотя как, если вы и так знаете как работаеть с HollowEngine, потому что умеете читать исходники - то я рад за вас,
+ * но вот если вы вообще не понимаете и проголосовали за всё остальное с надеждой, что вам разжуют - вам соболезную. Вы опустились для меня.
+*/
 
 object WelcomePage : Composable {
     var r = Random.nextInt(0, 101)
@@ -39,7 +43,7 @@ object WelcomePage : Composable {
             """.trimIndent()
         )
 
-        textRich(
+        richText(
             """
             Тестовый текст рича парсер от ЧатГПТ. <bold>жирный</bold>, <italic>Итальянский ма-ма-мия</italic>.
             Этот будет <italic>одновременно и <bold>Итальняским и жирный</bold></italic>.
