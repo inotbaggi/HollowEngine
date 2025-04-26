@@ -4,6 +4,7 @@ import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.util.Color
 import ru.hollowhorizon.hollowengine.docs.*
 import ru.hollowhorizon.hollowengine.docs.utils.TextParser.text
+import ru.hollowhorizon.hollowengine.docs.utils.TextParser.textRich
 import kotlin.random.Random
 
 object WelcomePage : Composable {
@@ -35,6 +36,13 @@ object WelcomePage : Composable {
         text(
             """
             Текст который написал сеньёр данюат (это пиздёшь кнч же) Но нужно проверить - <h2>Как работает TextWrap</h2>!
+            """.trimIndent()
+        )
+
+        textRich(
+            """
+            Тестовый текст рича парсер от ЧатГПТ. <bold>жирный</bold>, <italic>Итальянский ма-ма-мия</italic>.
+            Этот будет <italic>одновременно и <bold>Итальняским и жирный</bold></italic>.
             """.trimIndent()
         )
 
