@@ -16,7 +16,6 @@ import de.fabmax.kool.util.MsdfFont
 import de.fabmax.kool.util.TextCaretNavigation
 import net.minecraft.client.Minecraft
 import ru.hollowhorizon.hc.common.events.EventBus
-import ru.hollowhorizon.hollowengine.client.gui.kool.backgroundMid
 import ru.hollowhorizon.hollowengine.client.gui.scripting.HACK_FONT
 import ru.hollowhorizon.hollowengine.client.gui.scripting.files.text.getCharAfterSelection
 import ru.hollowhorizon.hollowengine.client.gui.scripting.files.text.getCharBeforeSelection
@@ -183,14 +182,9 @@ fun UiScope.ScriptTextArea(
                 ) {
                     modifier.padding(sizes.smallGap * 0.5f)
                         .height(
-                            Grow(
-                                1f,
-                                max = Dp(
-                                    (font.lineHeight + sizes.smallGap.px * 2) * completions.size.coerceAtMost(10) + sizes.smallGap.px * 2
-                                )
-                            )
+                            (24.dp + sizes.smallGap) * completions.size.coerceAtMost(10) + sizes.smallGap
                         )
-                        .width(Grow(1f, max=FitContent))
+                        .width(Grow(1f, max = FitContent))
                         .background(null)
                         .border(null)
                         .zLayer(UiSurface.LAYER_POPUP)
@@ -211,7 +205,7 @@ fun UiScope.ScriptTextArea(
                             it.allowOverscrollY = false
                         }
                     ) {
-                        modifier.margin(end=sizes.gap)
+                        modifier.margin(end = sizes.gap)
 
                         textArea.completionsList = (this as LazyListNode).state
                         itemsIndexed(completions) { index, completion ->
@@ -306,12 +300,24 @@ open class TextAreaNode(parent: UiNode?, surface: UiSurface) : BoxNode(parent, s
 
         if (withVerticalScrollbar) {
             VerticalScrollbar {
-                lazyListAware(listState, ScrollbarOrientation.Vertical, ListOrientation.Vertical, scrollbarColor, vScrollbarModifier)
+                lazyListAware(
+                    listState,
+                    ScrollbarOrientation.Vertical,
+                    ListOrientation.Vertical,
+                    scrollbarColor,
+                    vScrollbarModifier
+                )
             }
         }
         if (withHorizontalScrollbar) {
             HorizontalScrollbar {
-                lazyListAware(listState, ScrollbarOrientation.Horizontal, ListOrientation.Vertical, scrollbarColor, hScrollbarModifier)
+                lazyListAware(
+                    listState,
+                    ScrollbarOrientation.Horizontal,
+                    ListOrientation.Vertical,
+                    scrollbarColor,
+                    hScrollbarModifier
+                )
             }
         }
     }
@@ -322,7 +328,7 @@ open class TextAreaNode(parent: UiNode?, surface: UiSurface) : BoxNode(parent, s
 
         selectionHandler.updateSelectionRange()
         linesHolder.indices(lineProvider.size) { lineIndex ->
-            if(lineIndex >= lineProvider.size) return@indices
+            if (lineIndex >= lineProvider.size) return@indices
             val line = lineProvider[lineIndex]
             val font = MsdfFont(HACK_FONT, 18f)
 
@@ -403,8 +409,20 @@ open class TextAreaNode(parent: UiNode?, surface: UiSurface) : BoxNode(parent, s
 
             if (lineIndex != areaModifier.selectionStartLine) return@onPositioned
 
-            areaModifier.setCompletionX(it.leftPx + line.charIndexToPx(areaModifier.selectionStartChar.coerceAtLeast(0)))
-            areaModifier.setCompletionY(it.bottomPx)
+            val selectionIndex = (areaModifier.selectionStartChar - 1).coerceAtLeast(0)
+
+            var dotIndex = TextCaretNavigation.startOfWord(line.text, selectionIndex)
+            if(dotIndex == -1) dotIndex = selectionIndex
+            areaModifier.setCompletionX(it.leftPx + line.charIndexToPx(dotIndex))
+
+            val centerY = topPx + heightPx / 2
+
+            if (it.bottomPx > centerY) {
+                val sizeY = (24.dp + sizes.smallGap).px * areaModifier.completions.size.coerceAtMost(10) + 24.dp.px
+                areaModifier.setCompletionY(it.bottomPx - sizeY)
+            } else {
+                areaModifier.setCompletionY(it.bottomPx)
+            }
         }
 
         if (this@TextAreaNode.modifier.onSelectionChanged != null) {
@@ -446,8 +464,13 @@ open class TextAreaNode(parent: UiNode?, surface: UiSurface) : BoxNode(parent, s
         val nextChar = modifier.getCharAfterSelection()
 
         if (keyEvent.isCharTyped) {
-            editText("${keyEvent.typedChar}")
-            bracketPairs[keyEvent.localKeyCode.code.toChar()]?.let { editText(it.toString()) }
+            val closing = bracketPairs[keyEvent.localKeyCode.code.toChar()]
+
+            if(closing == null) {
+                editText(keyEvent.typedChar.toString())
+            } else {
+                applyBrackets(keyEvent.typedChar.toString(), closing)
+            }
         } else if (keyEvent.isPressed) {
             when (keyEvent.keyCode) {
                 KeyboardInput.KEY_BACKSPACE -> {
@@ -514,10 +537,147 @@ open class TextAreaNode(parent: UiNode?, surface: UiSurface) : BoxNode(parent, s
             }
         } else if (keyEvent.isReleased) {
             when (keyEvent.keyCode) {
-                KeyboardInput.KEY_TAB -> editText(" ".repeat(4))
+                KeyboardInput.KEY_TAB -> {
+                    if(keyEvent.isShiftDown) {
+                        unindentSelection()
+                    } else {
+                        indentSelection()
+                    }
+                }
                 else -> {}
             }
         }
+    }
+
+    private fun applyBrackets(char: String, closing: Char) {
+        if (!selectionHandler.isEmptySelection) {
+            // Границы выделения
+            val fromLine = selectionHandler.selectionFromLine
+            val toLine   = selectionHandler.selectionToLine
+            val fromChar = selectionHandler.selectionFromChar
+            val toChar   = selectionHandler.selectionToChar
+
+            // Получаем текст выделения
+            val selectedText = selectionHandler.copySelection() ?: return
+            val editor = modifier.editorHandler ?: return
+
+
+            // Заменяем выделение на обёртку (открывающая + оригинал + закрывающая)
+            editor.replaceText(
+                fromLine, toLine,
+                fromChar, toChar,
+                "$char$selectedText$closing",
+                this
+            )
+
+            // Ставим новое выделение ровно на ту же часть, но внутри скобок
+            selectionHandler.selectionChanged(
+                fromLine, toLine,
+                fromChar + 1,
+                fromChar + 1 + selectedText.length
+            )
+
+        } else {
+            // --- нет выделения: поведение как раньше ---
+            editText(char)
+            editText(closing.toString())
+            // возвращаем каретку между скобками
+            selectionHandler.moveCaretLeft(wordWise = false, select = false)
+        }
+    }
+
+    private fun indentSelection() {
+        val editor = modifier.editorHandler ?: return
+
+        // Определяем границы выделения
+        val fromLine = selectionHandler.selectionFromLine
+        val toLine = selectionHandler.selectionToLine
+
+        // Если нет выделения — просто вставляем 4 пробела в текущую строку
+        if (fromLine == toLine && selectionHandler.isEmptySelection) {
+            val caretLine = selectionHandler.selectionCaretLine
+            val caretChar = selectionHandler.selectionCaretChar
+            // Вставляем 4 пробела перед кареткой
+            editor.insertText(caretLine, caretChar, "    ", this)
+            // Сдвигаем каретку вправо на 4
+            selectionHandler.selectionChanged(caretLine, caretLine, caretChar + 4, caretChar + 4)
+            return
+        }
+
+        // Для каждой строки в диапазоне вставляем 4 пробела в начало
+        for (line in fromLine..toLine) {
+            editor.insertText(line, 0, "    ", this)
+        }
+
+        // Обновляем координаты выделения: сдвигаем отступы начала и конца
+        val newFromChar = selectionHandler.selectionFromChar + 4
+        val newToChar = selectionHandler.selectionToChar + 4
+        selectionHandler.selectionChanged(fromLine, toLine, newFromChar, newToChar)
+    }
+
+    private fun unindentSelection() {
+        val editor = modifier.editorHandler ?: return
+
+        // 1) Нет выделения → удаляем до 4 пробелов прямо перед кареткой
+        if (selectionHandler.isEmptySelection) {
+            val line = selectionHandler.selectionCaretLine
+            val char = selectionHandler.selectionCaretChar
+            val text = lineProvider[line].text
+            // сколько пробелов подряд перед кареткой?
+            val spacesToRemove = text
+                .take(char)
+                .takeLastWhile { it == ' ' }
+                .length
+                .coerceAtMost(4)
+
+            if (spacesToRemove > 0) {
+                editor.replaceText(
+                    line, line,
+                    char - spacesToRemove, char,
+                    "", this
+                )
+                // ставим каретку на место после удаления
+                selectionHandler.selectionChanged(
+                    line, line,
+                    char - spacesToRemove, char - spacesToRemove
+                )
+            }
+            return
+        }
+
+        // 2) Есть выделение → для каждой строки удаляем до 4 пробелов в начале
+        val fromLine = selectionHandler.selectionFromLine
+        val toLine   = selectionHandler.selectionToLine
+
+        var removedAtStart = 0
+        var removedAtEnd   = 0
+
+        for (line in fromLine..toLine) {
+            val text = lineProvider[line].text
+            val count = text
+                .takeWhile { it == ' ' }
+                .length
+                .coerceAtMost(4)
+
+            if (count > 0) {
+                editor.replaceText(
+                    line, line,
+                    0, count,
+                    "", this
+                )
+                if (line == fromLine) removedAtStart = count
+                if (line == toLine)   removedAtEnd   = count
+            }
+        }
+
+        // Пересчитываем границы выделения, чтобы оно «повисло» на том же тексте
+        val newFromChar = (selectionHandler.selectionFromChar - removedAtStart).coerceAtLeast(0)
+        val newToChar   = (selectionHandler.selectionToChar   - removedAtEnd).coerceAtLeast(0)
+
+        selectionHandler.selectionChanged(
+            fromLine, toLine,
+            newFromChar, newToChar
+        )
     }
 
     private fun editText(text: String) {

@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameter
-import org.jetbrains.kotlin.ir.util.getSimpleFunction
-import org.jetbrains.kotlin.ir.util.superClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import ru.hollowhorizon.hollowengine.compiler.coroutine.util.builder
@@ -61,7 +58,7 @@ class ScriptRelocator : IrElementTransformerVoid() {
             annotations += builder.irCall(pluginContext.referenceClass(Suspendable)!!.constructors.first())
 
             parent = declaration
-            createDispatchReceiverParameter()
+            dispatchReceiverParameter = declaration.thisReceiver
             overriddenSymbols = listOf(original)
 
             body = builder.irBlockBody {
@@ -92,7 +89,7 @@ class ScriptRelocator : IrElementTransformerVoid() {
     override fun visitProperty(declaration: IrProperty): IrStatement {
         if (hasScript) {
             if(declaration.name == Name.identifier("\$\$result")) {
-                return declaration.backingField?.initializer?.expression ?: return super.visitProperty(declaration)
+                return super.visitExpression(declaration.backingField?.initializer?.expression ?: return super.visitProperty(declaration))
             }
 
             declaration.backingField?.let { field ->
