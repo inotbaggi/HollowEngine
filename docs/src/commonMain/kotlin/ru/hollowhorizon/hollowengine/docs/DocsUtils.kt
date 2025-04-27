@@ -54,7 +54,8 @@ fun UiScope.text(
         italic = if (italic) ITALIC_STD else 0f
     )
 
-    modifier.font(font)
+    modifier
+        .font(font)
         .align(alignmentX, alignmentY)
         .textAlignX(alignmentX)
         .margin(if (margin) sizes.gap else 0.dp, sizes.smallGap)
@@ -117,7 +118,7 @@ inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Uni
     }
 }
 
-fun UiScope.loadImage(path: String) = remember {
+fun UiScope.loadImage(path: String): Texture2d = remember {
     Texture2d(TexFormat.RGBA, MipMapping.Off, SamplerSettings()) {
         Assets.loadImage2d("hollowengine:docs/$path").getOrThrow()
     }

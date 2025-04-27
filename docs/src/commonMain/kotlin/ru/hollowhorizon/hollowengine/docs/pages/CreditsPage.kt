@@ -1,7 +1,14 @@
 package ru.hollowhorizon.hollowengine.docs.pages
 
-import de.fabmax.kool.modules.ui2.Composable
-import de.fabmax.kool.modules.ui2.UiScope
+import de.fabmax.kool.math.Vec2f
+import de.fabmax.kool.modules.ui2.*
+import de.fabmax.kool.pipeline.Texture2d
+import de.fabmax.kool.util.Color
+import ru.hollowhorizon.hollowengine.docs.Header
+import ru.hollowhorizon.hollowengine.docs.divide
+import ru.hollowhorizon.hollowengine.docs.loadImage
+import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
+import ru.hollowhorizon.hollowengine.docs.text
 
 object CreditsPage: Composable {
     enum class Author(val nick: String, val color: String) {
@@ -13,8 +20,6 @@ object CreditsPage: Composable {
     private var authorSelect = Author.NONE
     private val authors = listOf(Author.NONE, Author.THEHOLLOWHORIZON, Author.BENDY659, Author.UNKNOWN)
 
-    override fun UiScope.compose() {}
-    /*
         override fun UiScope.compose() {
             val avatars = listOf(
                 loadImage("authors/none.png"),
@@ -89,5 +94,4 @@ object CreditsPage: Composable {
                     }
                 }
         }
-     */
 }

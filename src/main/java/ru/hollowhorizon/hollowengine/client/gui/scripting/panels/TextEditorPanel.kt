@@ -9,6 +9,7 @@ import de.fabmax.kool.util.MsdfFontData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.com.intellij.openapi.editor.markup.TextAttributes
+import ru.hollowhorizon.hc.client.kool.minecraft.Image
 import ru.hollowhorizon.hollowengine.docs.HACK_FONT
 import java.io.File
 
@@ -72,6 +73,10 @@ class TextEditorPanel(dock: Dock): DockPanel("hollowengine.gui.ide.text_editor",
                     .align(AlignmentX.Center, AlignmentY.Center)
                     .editorHandler(DefaultTextEditorHandler(providerEditor.lines))
             }
+        }
+
+        Image("") {
+
         }
     }
 
