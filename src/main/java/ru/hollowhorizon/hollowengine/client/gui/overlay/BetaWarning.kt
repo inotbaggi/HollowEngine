@@ -6,10 +6,13 @@ import de.fabmax.kool.pipeline.ClearDepthDontCare
 import de.fabmax.kool.scene.Scene
 import de.fabmax.kool.util.Color
 import ru.hollowhorizon.hc.client.kool.KoolManager
+import ru.hollowhorizon.hollowengine.HollowEngine
 import ru.hollowhorizon.hollowengine.client.gui.scripting.theme.IdeTheme
 
 object BetaWarning {
     val overlay = Scene("Compilation Status").apply {
+        if(HollowEngine.config.beta.notifiedIsNotStableBeta) return@apply
+
         setupUiScene()
         clearColor = ClearColorDontCare
         clearDepth = ClearDepthDontCare
@@ -38,7 +41,10 @@ object BetaWarning {
                 }
                 Button("Я понял") {
                     modifier.alignX(AlignmentX.Center).alignY(AlignmentY.Bottom)
-                        .onClick { KoolManager.context.removeScene(this@apply) }
+                        .onClick {
+                            HollowEngine.config.beta    .notifiedIsNotStableBeta = true
+                            KoolManager.context.removeScene(this@apply)
+                        }
                 }
             }
         }
