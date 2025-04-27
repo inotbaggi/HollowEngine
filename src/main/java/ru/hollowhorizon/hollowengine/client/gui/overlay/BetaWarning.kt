@@ -4,10 +4,14 @@ import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.util.Color
 import ru.hollowhorizon.hc.client.kool.KoolManager
 import ru.hollowhorizon.hc.client.kool.ScreenScene
+import ru.hollowhorizon.hc.common.config.HollowConfig
+import ru.hollowhorizon.hollowengine.HollowEngine
 import ru.hollowhorizon.hollowengine.client.gui.scripting.theme.IdeTheme
 
 object BetaWarning {
     val overlay = ScreenScene("Compilation Status").apply {
+        if(HollowEngine.config.beta.notifiedIsNotStableBeta) return@apply
+
         setupUiScene()
 
         val sizes = Sizes.medium
@@ -34,7 +38,10 @@ object BetaWarning {
                 }
                 Button("Я понял") {
                     modifier.alignX(AlignmentX.Center).alignY(AlignmentY.Bottom)
-                        .onClick { KoolManager.context.removeScene(this@apply) }
+                        .onClick {
+                            HollowEngine.config.beta.notifiedIsNotStableBeta = true // Your notified
+                            KoolManager.context.removeScene(this@apply)
+                        }
                 }
             }
         }

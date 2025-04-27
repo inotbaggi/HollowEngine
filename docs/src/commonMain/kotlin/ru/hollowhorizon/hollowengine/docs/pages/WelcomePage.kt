@@ -1,19 +1,19 @@
 package ru.hollowhorizon.hollowengine.docs.pages
 
 import de.fabmax.kool.modules.ui2.*
-import ru.hollowhorizon.hollowengine.docs.utils.OldTextParser.richText
-import ru.hollowhorizon.hollowengine.docs.utils.OldTextParser.text
+import de.fabmax.kool.util.Color
+import ru.hollowhorizon.hollowengine.docs.*
 import kotlin.random.Random
 
 /*
- * Спасибо тем, кто голосовал за докив опросе, я рад за вас.
- * Остальным - соболезную. Хотя как, если вы и так знаете как работаеть с HollowEngine, потому что умеете читать исходники - то я рад за вас,
- * но вот если вы вообще не понимаете и проголосовали за всё остальное с надеждой, что вам разжуют - вам соболезную. Вы опустились для меня.
+ * Спасибо тем, кто голосовал за доки в опросе, я рад за вас.
+ * Остальным - соболезную. Хотя как, если вы и так знаете как работать с HollowEngine, потому что умеете читать исходники - то я рад за вас,
+ * но вот если вы вообще не понимаете и проголосовали за всё остальное с надеждой, что вам разжуют — вам соболезную. Вы опустились для меня.
 */
 
 object WelcomePage : Composable {
-    var r = Random.nextInt(0, 101)
-    val titleImg: () -> Pair<String, Float> = {
+    private var r = Random.nextInt(0, 101)
+    private val titleImg: () -> Pair<String, Float> = {
         if(r in 96..98)
             "welcome" to 0.1f
         else if(r in 98..100)
@@ -22,36 +22,8 @@ object WelcomePage : Composable {
             "welcome2" to 0.05f
     }
 
-    val sHide0 = mutableStateOf(false)
+    private val sHide0 = mutableStateOf(false)
 
-    override fun UiScope.compose() {
-        text(
-            """
-            Example text
-            <h1>Example Header H1</h1>
-            <h2>Header 2</h2>
-            <bold>Is bold text</bold>
-            <italic>Is Italyano text</italic>
-            Это пипец какой красивый текст. <bold>Он будет жирным</bold>, <italic>И он будет Итальянским</italic>. И да, он в ОДНУ ПОЛОСКУ!!!
-            <color=#FF00000>Этот цвет красный</color>
-            {DFdkmfmsdfsedfokesdjfjksoedfnojkesfnojkdsf <italic>DHFDSFCJOFNCONEPSADJFCPEDSAJFPCKENPDSFNPKdnfsfesrdfg rwsfgrsfgdsgerdsfgsrfgrewsf</italic>
-            """.trimIndent()
-        )
-        text(
-            """
-            Текст который написал сеньёр данюат (это пиздёшь кнч же) Но нужно проверить - <h2>Как работает TextWrap</h2>!
-            """.trimIndent()
-        )
-
-        richText(
-            """
-            Тестовый текст рича парсер от ЧатГПТ. <bold>жирный</bold>, <italic>Итальянский ма-ма-мия</italic>.
-            Этот будет <italic>одновременно и <bold>Итальняским и жирный</bold></italic>.
-            """.trimIndent()
-        )
-
-    }
-    /*
     override fun UiScope.compose() {
         text("Добро пожаловать", Header.H1)
         text("на официальную документацию по моду", Header.H2)
@@ -63,7 +35,7 @@ object WelcomePage : Composable {
         br()
         spoiler("Спойлер", sHide0) {
             text("Не нада со слезами бежать в канал #помощь и там просить-молить чтоб вам помогли. >:(")
-            text("Изучите документацию обязательно"); text("ПОЛНОСТЬЮ", Header.H3, bold = true); text("Потому что скорее всего ваша проблема не то что решена, а абсолютно абсурдна!")
+            text("Изучите документацию обязательно !!!ПОЛНОСТЬЮ!!! Потому что скорее всего ваша проблема не то что решена, а абсолютно абсурдна!")
             text("Это значит что вы задаёте вопрос, когда ответ есть прямо в документации, но вы почему-то не хотите её читать полностью :(")
             text("Я не знаю как вы там доки блин читаете. Не уж то реально, до 1-го предложения и потом сидите и - \"Пипец я умный\"!", Header.H6, italic = true)
         }
@@ -92,5 +64,4 @@ object WelcomePage : Composable {
             }
         }
     }
-     */
 }

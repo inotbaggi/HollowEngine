@@ -5,8 +5,13 @@ import de.fabmax.kool.loadBlob
 import de.fabmax.kool.loadImage2d
 import de.fabmax.kool.math.Vec2f
 import de.fabmax.kool.modules.ui2.*
-import de.fabmax.kool.pipeline.*
+import de.fabmax.kool.pipeline.MipMapping
+import de.fabmax.kool.pipeline.SamplerSettings
+import de.fabmax.kool.pipeline.TexFormat
+import de.fabmax.kool.pipeline.Texture2d
 import de.fabmax.kool.util.*
+import de.fabmax.kool.util.MsdfFont.Companion.ITALIC_STD
+import de.fabmax.kool.util.MsdfFont.Companion.WEIGHT_EXTRA_BOLD
 import kotlinx.serialization.json.Json
 import ru.hollowhorizon.hollowengine.docs.shaders.BlurImageShader
 
@@ -22,6 +27,32 @@ suspend fun loadResources() {
         Assets.loadImage2d("hollowengine:fonts/hack.png").getOrThrow()
     }
     HACK_FONT = MsdfFontData(msdfMap, fontInfo)
+}
+
+enum class Header(val fontSize: Float) { H1(20f), H2(18f), H3(14f), H4(12f), H5(10f), H6(8f) }
+
+fun UiScope.text(
+    text: String,
+    header: Header = Header.H4,
+    alignmentX: AlignmentX = AlignmentX.Center,
+    alignmentY: AlignmentY = AlignmentY.Top,
+    bold: Boolean = false,
+    italic: Boolean = false,
+    margin: Boolean = true,
+): UiScope = Text(text) {
+    val font = MsdfFont(
+        HACK_FONT,
+        sizePts = header.fontSize,
+        weight = if (bold) WEIGHT_EXTRA_BOLD else 0f,
+        italic = if (italic) ITALIC_STD else 0f
+    )
+
+    modifier.font(font)
+        .align(alignmentX, alignmentY)
+        .textAlignX(alignmentX)
+        .margin(if (margin) sizes.gap else 0.dp, sizes.smallGap)
+        .width(Grow(1f))
+        .isWrapText(true)
 }
 
 fun UiScope.divide(color: Color = Color.WHITE) = Box { modifier.size(Grow.Std, sizes.borderWidth).backgroundColor(color).margin(sizes.gap) }
