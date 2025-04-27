@@ -1,14 +1,11 @@
 package ru.hollowhorizon.hollowengine.client.gui.scripting.panels
 
-import de.fabmax.kool.input.Input
 import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.modules.ui2.docking.Dock
 import de.fabmax.kool.util.Color
 import de.fabmax.kool.util.MsdfFont
-import de.fabmax.kool.util.MsdfFontData
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import org.jetbrains.kotlin.com.intellij.openapi.editor.markup.TextAttributes
 import ru.hollowhorizon.hc.client.kool.minecraft.Image
 import ru.hollowhorizon.hollowengine.docs.HACK_FONT
 import java.io.File

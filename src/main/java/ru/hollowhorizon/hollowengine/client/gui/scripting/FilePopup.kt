@@ -12,16 +12,7 @@ import ru.hollowhorizon.hollowengine.client.utils.lang
 import ru.hollowhorizon.hollowengine.common.files.DirectoryManager.fromReadablePath
 import ru.hollowhorizon.hollowengine.common.util.DesktopUtil
 
-interface Popup: Composable {
-    override fun UiScope.compose() {}
-    fun show(node: FileNode, position: Vec2f) {}
-
-    companion object {
-        val EMPTY = object : Popup {}
-    }
-}
-
-class FilePopup : Popup {
+class FilePopup : Composable {
     private lateinit var filePopup: ItemPopupMenu<FileNode>
 
     private lateinit var createFolderPopup: ItemPopupMenu<FileNode>
@@ -55,7 +46,7 @@ class FilePopup : Popup {
     private fun rename(item: FileNode, newName: String) = RenameFilePacket(item.treePath, newName).send()
     private fun delete(item: FileNode) = DeleteFilePacket(item.treePath).send()
 
-    override fun show(node: FileNode, position: Vec2f) {
+    fun show(node: FileNode, position: Vec2f) {
         filePopup.hide()
         filePopup.show(Vec2f(position), SubMenuItem {
             if (node.isFolder) {

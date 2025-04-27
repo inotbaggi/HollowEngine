@@ -10,11 +10,6 @@ object DirectoryManager {
             if (!exists()) mkdirs()
         }.toPath()
     }
-    val TEXT_EDITOR: Path by lazy {
-        File("").resolve("text_editor").apply {
-            if(!exists()) mkdirs()
-        }.toPath()
-    }
 
     @JvmStatic
     fun File.toReadablePath(): String {
