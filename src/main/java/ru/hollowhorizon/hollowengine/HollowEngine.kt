@@ -51,16 +51,31 @@ object HollowEngine {
     }
 }
 
-
 @Serializable
 class EngineConfig : HollowConfig() {
     @SerialName("ide_config")
     var ideConfig = IDEConfig()
+
+    @SerialName("docs_config")
+    var docsDebug = DocsConfig()
+
+    @SerialName("is_beta")
+    var beta = BetaConfig()
 
     @Serializable
     class IDEConfig {
         var tabSpace = 4
         var fontSize = 30
         var enableSound = false
+    }
+
+    @Serializable
+    class DocsConfig {
+        var debugPages = false
+    }
+
+    @Serializable
+    class BetaConfig {
+        var notifiedIsNotStableBeta = false
     }
 }
