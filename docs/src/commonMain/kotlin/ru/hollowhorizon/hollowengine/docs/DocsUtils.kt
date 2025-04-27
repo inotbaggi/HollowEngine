@@ -29,7 +29,14 @@ suspend fun loadResources() {
     HACK_FONT = MsdfFontData(msdfMap, fontInfo)
 }
 
-enum class Header(val fontSize: Float) { H1(20f), H2(18f), H3(14f), H4(12f), H5(10f), H6(8f) }
+enum class Header(val fontSize: Float) {
+    H1(30f),
+    H2(26f),
+    H3(22f),
+    H4(18f),
+    H5(14f),
+    H6(10f)
+}
 
 fun UiScope.text(
     text: String,
@@ -102,7 +109,7 @@ inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Uni
                 .margin(sizes.gap)
 
             Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(sizes.gap * 2, sizes.gap * 2) }
-            Text(title) { modifier.alignY(AlignmentY.Center).font(MsdfFont(HACK_FONT, sizePts = 14f)) }
+            Text(title) { modifier.alignY(AlignmentY.Center).font(MsdfFont(HACK_FONT, sizePts = Header.H3.fontSize)) }
             Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(sizes.gap * 2, sizes.gap * 2) }
         }
         divide(Color(type.border))
@@ -116,20 +123,43 @@ fun UiScope.loadImage(path: String) = remember {
     }
 }
 
+/**
+ * Типы кнопок.
+ * @property DEFAULT - Обычная кнопка.
+ * @property LINK - Кнопка, которая указывает что она является ссылкой,
+ * @property SPOILER - Кнопка, которая указывает что это кнопка-спойлер.
+ */
 enum class ButtonType(val basic: String, val hover: String) {
     DEFAULT("D4AF37", "B68F2D"),
     LINK("5DADE2", "3498DB"),
     SPOILER("793EDE", "9A5EFF")
 }
+
+/**
+ * Кнопка.
+ * @param text Текст на кнопке.
+ * @param textSize Размер текста на кнопке.
+ * @param textColor Цвет текста на кнопке. По умолчанию - Чёрный.
+ * @param type Тип кнопки. Определяет её цвет. Типы: [ButtonType]
+ * @param buttonColor Цвет кнопки. Порядок: 0 - Обычная, 1 - Наведённая.
+ * @param action Логика при нажатии на кнопку.
+ */
 fun UiScope.button(
     text: String = "",
-    type: ButtonType = ButtonType.DEFAULT,
-    action: () -> Unit
+    textSize: Header = Header.H3,
+    textColor: Color = Color.BLACK,
+    type: ButtonType? = ButtonType.DEFAULT,
+    buttonColor: List<Color>? = null, // 0 = Basic | 1 = Hover
+    action: (() -> Unit) = {}
 ) = Button(text) {
     modifier
-        .font(MsdfFont(HACK_FONT))
+        .font(MsdfFont(HACK_FONT, sizePts = textSize.fontSize))
+        .textColor(textColor)
         .margin(4.dp)
-        .colors(buttonColor = Color(type.basic), buttonHoverColor = Color(type.hover))
+        .colors(
+            buttonColor = buttonColor?.get(0) ?: Color(type?.basic ?: ButtonType.DEFAULT.basic),
+            buttonHoverColor = buttonColor?.get(1) ?: Color(type?.hover ?: ButtonType.DEFAULT.hover)
+        )
         .onClick { action() }
 }
 expect fun openUrl(url: String)
@@ -137,14 +167,14 @@ expect fun openUrl(url: String)
 fun UiScope.spoiler(button: String = "Spoiler", hiddenVar: MutableStateValue<Boolean>, hidendCotent: UiScope.() -> Unit) {
     if(!hiddenVar.value)
         Box { modifier.align(AlignmentX.Center, AlignmentY.Center)
-            button(button, ButtonType.SPOILER) { hiddenVar.value = true }
+            button(button, type = ButtonType.SPOILER) { hiddenVar.value = true }
         }
     else {
         table(button, TableType.SPOILER) {
             hidendCotent()
             divbr(Color(TableType.SPOILER.border))
             Box { modifier.align(AlignmentX.Center, AlignmentY.Bottom)
-                button("Скрыть", ButtonType.SPOILER) { hiddenVar.value = false }
+                button("Скрыть", type = ButtonType.SPOILER) { hiddenVar.value = false }
             }
         }
     }
