@@ -14,11 +14,19 @@ import ru.hollowhorizon.hc.client.utils.stream
 import ru.hollowhorizon.hc.common.utils.json.JsonFormat
 import ru.hollowhorizon.hc.common.utils.rl
 
-
 val HACK_FONT by lazy {
     val fontInfo = JsonFormat.decodeFromStream<MsdfMeta>("hollowengine:fonts/hack.json".rl.stream)
     val msdfMap = Texture2d(TexFormat.RGBA, MipMapping.Off, SamplerSettings(), "MsdfFont:${fontInfo.name}") {
         Assets.loadImage2d("hollowengine:fonts/hack.png")
+            .getOrDefault(SingleColorTexture.getColorTextureData(Color.BLACK))
+    }
+    MsdfFontData(msdfMap, fontInfo)
+}
+
+val MC by lazy {
+    val fontInfo = JsonFormat.decodeFromStream<MsdfMeta>("hollowengine:fonts/mc.json".rl.stream)
+    val msdfMap = Texture2d(TexFormat.RGBA, MipMapping.Off, SamplerSettings().linear(), "MsdfFont:${fontInfo.name}") {
+        Assets.loadImage2d("hollowengine:fonts/mc.png")
             .getOrDefault(SingleColorTexture.getColorTextureData(Color.BLACK))
     }
     MsdfFontData(msdfMap, fontInfo)

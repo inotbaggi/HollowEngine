@@ -2,7 +2,6 @@ package ru.hollowhorizon.hollowengine.common.files
 
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.walk
 
 object DirectoryManager {
     val HOLLOW_ENGINE: Path by lazy {

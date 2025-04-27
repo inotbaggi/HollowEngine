@@ -10,7 +10,7 @@ import ru.hollowhorizon.hollowengine.client.gui.scripting.panels.TextEditorPanel
 fun loadLayouts(event: LoadLayoutEvent) {
     event.provide("hollowengine.gui.ide.project_tree", ::FileTreePanel)
     event.provide("hollowengine.gui.ide.docs", ::DocsTreePanel)
-    event.provide("hollowengine.gui.ide.text_editor", ::TextEditorPanel)
+    //event.provide("hollowengine.gui.ide.text_editor", ::TextEditorPanel)
     
     // event.provide("hollowengine.gui.ide.recipes", ::RecipeEditorPanel)
 }

@@ -15,6 +15,7 @@ import ru.hollowhorizon.hc.common.utils.get
 import ru.hollowhorizon.hc.common.utils.nbt.ForCompoundNBT
 import ru.hollowhorizon.hollowengine.common.files.DirectoryManager.fromReadablePath
 import ru.hollowhorizon.hollowengine.common.scripting.core.ScriptingCompiler
+import ru.hollowhorizon.hollowengine.scripting.Suspendable
 import kotlin.script.experimental.api.valueOrThrow
 
 object KoolServerManager {
