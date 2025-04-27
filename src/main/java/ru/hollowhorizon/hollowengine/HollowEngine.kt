@@ -1,6 +1,7 @@
 package ru.hollowhorizon.hollowengine
 
 import com.mojang.blaze3d.systems.RenderSystem
+import de.fabmax.kool.util.launchOnMainThread
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,6 +16,7 @@ import ru.hollowhorizon.hollowengine.common.scripting.core.ScriptingCompiler
 import ru.hollowhorizon.hollowengine.common.scripting.core.example.HollowScript
 import ru.hollowhorizon.hollowengine.common.scripting.core.setupScripting
 import ru.hollowhorizon.hollowengine.common.scripting.events.loadEvents
+import ru.hollowhorizon.hollowengine.docs.loadResources
 //? if forge
 /*import ru.hollowhorizon.hollowengine.mixins.client.setupCamera*/
 
@@ -25,6 +27,8 @@ object HollowEngine {
     val config by hollowConfig(::EngineConfig, "hollowengine")
 
     init {
+        launchOnMainThread { loadResources() }
+
         setupScripting()
 
         runBlocking {
