@@ -23,6 +23,7 @@ val HACK_FONT by lazy {
     MsdfFontData(msdfMap, fontInfo)
 }
 
+// Если тебе Холоу не нравится что оно тут - можешь перенести куда-то :) //
 val MC by lazy {
     val fontInfo = JsonFormat.decodeFromStream<MsdfMeta>("hollowengine:fonts/mc.json".rl.stream)
     val msdfMap = Texture2d(TexFormat.RGBA, MipMapping.Off, SamplerSettings().linear(), "MsdfFont:${fontInfo.name}") {

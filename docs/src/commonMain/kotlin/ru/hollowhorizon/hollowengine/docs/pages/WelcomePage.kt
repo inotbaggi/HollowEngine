@@ -25,6 +25,8 @@ object WelcomePage : Composable {
     private val sHide0 = mutableStateOf(false)
 
     override fun UiScope.compose() {
+        wow()
+
         text("Добро пожаловать", Header.H1)
         text("на официальную документацию по моду", Header.H2)
         text("\"HollowEngine\"", Header.H3, bold = true)
@@ -63,5 +65,19 @@ object WelcomePage : Composable {
                 }
             }
         }
+    }
+
+    private fun UiScope.wow() {
+        var iRememberThat = remember { false }
+
+        if(!iRememberThat) return
+
+        when {
+            (r in 96..98) -> println("Ух ты. Старый титульник! Повезло тебе увидеть его")
+            (r in 98..100) -> println("Офигеть! Ты увидел самый редкий встречный титульник! Холоу + Lays: Pressure air = :love: (XD)")
+            else -> println("Ну.. самый обычный титульник. Может быть тебе повезёт в следующий раз?")
+        }
+
+        iRememberThat = true
     }
 }
