@@ -9,16 +9,13 @@ import ru.hollowhorizon.hollowengine.docs.pages.WelcomePage
 import ru.hollowhorizon.hollowengine.docs.pages.begin.DirectoryPage
 
 class DocsTreePanel(dock: Dock) : DockPanel("hollowengine.gui.ide.docs", dock) {
-    override val icon = "hollowengine:textures/gui/icons/docs.svg"
+    override val icon = "hollowengine:textures/gui/icons/docs.png"
 
-    override fun UiScope.compose() {
-        docsTree()
-    }
+    override fun UiScope.compose() = docsTree()
 
     val docsTree = DocsNode("HollowEngine", "").apply {
-        //initPages()
-
         isFolder = true
+
         children += DocsNode("welcome", WelcomePage)
         children += DocsNode("credits", CreditsPage)
         children += DocsNode("begin", ".").apply {
