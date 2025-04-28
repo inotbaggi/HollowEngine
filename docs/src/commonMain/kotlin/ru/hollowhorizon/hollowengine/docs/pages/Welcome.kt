@@ -29,7 +29,7 @@ object Welcome : Composable {
             // ==== //
 
             Box { modifier.align(AlignmentX.Center, AlignmentY.Bottom)
-                button("Документация по Kotlin", ButtonType.LINK) { openUrl("https://kotlinlang.org/docs/basic-syntax.html") }
+                button("Документация по Kotlin", type = ButtonType.LINK) { openUrl("https://kotlinlang.org/docs/basic-syntax.html") }
             }
         }
 
@@ -43,8 +43,8 @@ object Welcome : Composable {
 
             Box { modifier.align(AlignmentX.Center, AlignmentY.Bottom)
                 Row {
-                    button("GitHub Issues", ButtonType.LINK) { openUrl("https://github.com/HollowHorizon/HollowEngine/issues") }
-                    button("Discord", ButtonType.LINK) { openUrl("https://discord.gg/qYzFXXpzZk") }
+                    button("GitHub Issues", type = ButtonType.LINK) { openUrl("https://github.com/HollowHorizon/HollowEngine/issues") }
+                    button("Discord", type = ButtonType.LINK) { openUrl("https://discord.gg/qYzFXXpzZk") }
                 }
             }
         }
