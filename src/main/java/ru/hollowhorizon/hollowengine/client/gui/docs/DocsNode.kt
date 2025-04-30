@@ -26,30 +26,6 @@ class DocsNode(name: String, path: String, val page: Composable? = null) : FileN
         // Открываем / Закрываем папку
         isExpanded.set(!isExpanded.value)
     }
-    /*
-        override fun UiScope.sceneObjectItem(item: FileNode) {
-            modifier
-                .onClick { evt ->
-                    if (evt.pointer.isLeftButtonClicked) {
-                        if (item.isFolder && evt.pointer.leftButtonRepeatedClickCount == 2) {
-                            item.toggleExpanded()
-                        } else {
-                            IdeContent.openDocFile(item)
-                        }
-                    }
-                }
-                .margin(horizontal = sizes.smallGap)
-                .padding(horizontal = sizes.smallGap)
-                .onEnter { isHovered = true }
-                .onExit { isHovered = false }
-
-            if (isHovered) modifier.background(RoundRectBackground(colors.hoverBg, sizes.smallGap))
-
-            val fgColor = if (isHovered) colors.primary else colors.secondary
-
-            sceneObjectLabel(item, fgColor)
-        }
-    */
     override fun UiScope.sceneObjectItem(item: FileNode) {
         modifier.onClick { evt ->
             if(evt.pointer.isLeftButtonClicked && evt.pointer.leftButtonRepeatedClickCount == 2) {
