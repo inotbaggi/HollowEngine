@@ -1,9 +1,14 @@
 package ru.hollowhorizon.hollowengine.client.gui.docs
 
 import de.fabmax.kool.modules.ui2.*
-import ru.hollowhorizon.hollowengine.client.gui.kool.hoverBg
+import de.fabmax.kool.util.Color
+import net.minecraft.client.Minecraft
 import ru.hollowhorizon.hollowengine.client.gui.scripting.FileNode
 import ru.hollowhorizon.hollowengine.client.gui.scripting.IdeContent
+import ru.hollowhorizon.hollowengine.client.gui.scripting.RequestFilePacket
+import ru.hollowhorizon.hollowengine.client.gui.scripting.ScriptingEnvironmentScreen
+import ru.hollowhorizon.hollowengine.client.gui.scripting.theme.IdeTheme
+import ru.hollowhorizon.hollowengine.client.gui.scripting.tools.hoverColors
 import ru.hollowhorizon.hollowengine.client.utils.lang
 
 class DocsNode(name: String, path: String, val page: Composable? = null) : FileNode(name, path) {
@@ -21,27 +26,47 @@ class DocsNode(name: String, path: String, val page: Composable? = null) : FileN
         // Открываем / Закрываем папку
         isExpanded.set(!isExpanded.value)
     }
-
-    override fun UiScope.sceneObjectItem(item: FileNode) {
-        modifier
-            .onClick { evt ->
-                if (evt.pointer.isLeftButtonClicked) {
-                    if (item.isFolder && evt.pointer.leftButtonRepeatedClickCount == 2) {
-                        item.toggleExpanded()
-                    } else {
-                        IdeContent.openDocFile(item)
+    /*
+        override fun UiScope.sceneObjectItem(item: FileNode) {
+            modifier
+                .onClick { evt ->
+                    if (evt.pointer.isLeftButtonClicked) {
+                        if (item.isFolder && evt.pointer.leftButtonRepeatedClickCount == 2) {
+                            item.toggleExpanded()
+                        } else {
+                            IdeContent.openDocFile(item)
+                        }
                     }
                 }
+                .margin(horizontal = sizes.smallGap)
+                .padding(horizontal = sizes.smallGap)
+                .onEnter { isHovered = true }
+                .onExit { isHovered = false }
+
+            if (isHovered) modifier.background(RoundRectBackground(colors.hoverBg, sizes.smallGap))
+
+            val fgColor = if (isHovered) colors.primary else colors.secondary
+
+            sceneObjectLabel(item, fgColor)
+        }
+    */
+    override fun UiScope.sceneObjectItem(item: FileNode) {
+        modifier.onClick { evt ->
+            if(evt.pointer.isLeftButtonClicked && evt.pointer.leftButtonRepeatedClickCount == 2) {
+                if(item.isFolder)
+                    item.toggleExpanded()
+                else
+                    IdeContent.openDocFile(item)
             }
-            .margin(horizontal = sizes.smallGap)
-            .padding(horizontal = sizes.smallGap)
-            .onEnter { isHovered = true }
-            .onExit { isHovered = false }
+        }
 
-        if (isHovered) modifier.background(RoundRectBackground(colors.hoverBg, sizes.smallGap))
+        val (bgColor, fgColor) = hoverColors(
+            0.5f,
+            listOf(colors.background, Color("9099ACFF")),
+            listOf(IdeTheme.hoveredColors.background, Color("C4CBDAFF"))
+        )
 
-        val fgColor = if (isHovered) colors.primary else colors.secondary
-
+        modifier.background(RoundRectBackground(bgColor, sizes.smallGap))
         sceneObjectLabel(item, fgColor)
     }
 }
