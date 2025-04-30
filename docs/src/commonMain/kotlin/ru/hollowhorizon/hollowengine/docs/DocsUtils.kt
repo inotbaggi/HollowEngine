@@ -160,9 +160,9 @@ inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Uni
                 .align(AlignmentX.Center, AlignmentY.Top)
                 .margin(sizes.gap)
 
-            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(sizes.gap * 2, sizes.gap * 2) }
+            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(sizes.gap * 4, sizes.gap * 4) }
             Text(title) { modifier.alignY(AlignmentY.Center).font(MsdfFont(HACK_FONT, sizePts = Header.H3.fontSize)) }
-            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(sizes.gap * 2, sizes.gap * 2) }
+            Image(loadImage("icons/table_${type.icon}.png")) { modifier.tint(Color(type.border)).margin(sizes.gap).size(sizes.gap * 4, sizes.gap * 4) }
         }
         divide(Color(type.border))
         body()
