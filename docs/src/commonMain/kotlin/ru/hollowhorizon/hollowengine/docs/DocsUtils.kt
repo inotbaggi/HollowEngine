@@ -30,15 +30,6 @@ suspend fun loadResources() {
     HACK_FONT = MsdfFontData(msdfMap, fontInfo)
 }
 
-/**
- * Размер текста.
- * @property H1 30px.
- * @property H2 26px.
- * @property H3 22px.
- * @property H4 18px.
- * @property H5 14px;
- * @property H6 10px.
- */
 enum class Header(val fontSize: Float) {
     H1(30f),
     H2(26f),
@@ -48,16 +39,6 @@ enum class Header(val fontSize: Float) {
     H6(10f)
 }
 
-/**
- * Текст.
- * @param text Текст (лол).
- * @param header Не помню как это называется, но определяет размер текста.[Header]. По умолчанию - 18px.
- * @param alignmentX Положение текста по горизонтали. По умолчанию - По центру.
- * @param alignmentY Положение текста по вертикали. По умолчания - Сверху.
- * @param bold Текст будет жирным.
- * @param italic Текст будет наклонённым.
- * @param margin Отступ текста от всего вокруг.
- */
 fun UiScope.text(
     text: String,
     header: Header = Header.H4,
@@ -66,6 +47,7 @@ fun UiScope.text(
     bold: Boolean = false,
     italic: Boolean = false,
     margin: Boolean = true,
+    textScope: TextScope.() -> Unit = {}
 ): UiScope = Text(text) {
     modifier
         .font(
@@ -79,31 +61,17 @@ fun UiScope.text(
         .align(alignmentX, alignmentY)
         .textAlignX(alignmentX)
         .margin(if (margin) sizes.gap else 0.dp, sizes.smallGap)
-        .width(Grow(1f))
+        .width(Grow.Std)
         .isWrapText(true)
+
+    textScope()
 }
 
-/**
- * Разделитель.
- * @param color Цвет для разделителя. ПО умолчанию - Светло-серый.
- */
+
 fun UiScope.divide(color: Color = Color.LIGHT_GRAY) = Box { modifier.size(Grow.Std, sizes.borderWidth).backgroundColor(color).margin(sizes.gap) }
-
-/**
- * Перенос на следующую строку. Сокращение от brake.
- */
 fun UiScope.br() = Box { modifier.size(Grow.Std, 4.dp).margin(sizes.gap) }
-
-/**
- * Комбинация из [divide] и [br]
- */
 fun UiScope.divbr(color: Color = Color.LIGHT_GRAY) { br(); divide(color); br() }
 
-/**
- * Титульник для страницы для доков.
- * @param id имя файла титульника, который должен быть в 'hollowengine:docs/titles/$id.png'
- * @param borderBlendPower Сила прозрачности титульника по краям.
- */
 fun UiScope.title(id: String = "no_title", borderBlendPower: Float = 0.1f) =
     Image(loadImage("titles/$id.png")) {
     val shader = BlurImageShader()
@@ -122,15 +90,6 @@ fun UiScope.title(id: String = "no_title", borderBlendPower: Float = 0.1f) =
         }
 }
 
-/**
- * Типы таблиц.
- * @property NOTE Обычная белая таблица.
- * @property TIP Фактовая зелёная таблица.
- * @property INFO Информирующая голубая таблица.
- * @property WARN Предупредительная жёлтая таблица.
- * @property ERR Ошибочная красная таблица.
- * @property SPOILER Спойлерная фиолетовая таблица для [spoiler].
- */
 enum class TableType(val bg: String, val border: String, val icon: String) {
     NOTE("878787", "D4D4D4", "note"),
     TIP("438C34", "73D160", "tip"),
@@ -140,12 +99,6 @@ enum class TableType(val bg: String, val border: String, val icon: String) {
     SPOILER("6C348C", "A24FD1", "spoiler")
 }
 
-/**
- * Табличка, почти как на Docusaurus.
- * @param title Титульник таблички. Что будет написано в самом верху.
- * @param type тип таблички, [TableType].
- * @param body Контент таблицы. Что будет находится уже внутри.
- */
 inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Unit) {
     Column {
         modifier
@@ -169,37 +122,18 @@ inline fun UiScope.table(title: String, type: TableType, body: UiScope.() -> Uni
     }
 }
 
-/**
- * Упрощённый формат для загрузки картинок для доков.
- * @param path путь до картинки, начиная из 'hollowengine:docs/$path'
- */
 fun UiScope.loadImage(path: String): Texture2d = remember {
     Texture2d(TexFormat.RGBA, MipMapping.Off, SamplerSettings()) {
         Assets.loadImage2d("hollowengine:docs/$path").getOrThrow()
     }
 }
 
-/**
- * Типы кнопок.
- * @property DEFAULT Обычная кнопка.
- * @property LINK Кнопка, которая указывает что она является ссылкой,
- * @property SPOILER Кнопка, которая указывает что это кнопка-спойлер.
- */
 enum class ButtonType(val basic: String, val hover: String) {
     DEFAULT("D4AF37", "B68F2D"),
     LINK("5DADE2", "3498DB"),
     SPOILER("793EDE", "9A5EFF")
 }
 
-/**
- * Кнопка.
- * @param text Текст на кнопке.
- * @param textSize Размер текста на кнопке.
- * @param textColor Цвет текста на кнопке. По умолчанию - Чёрный.
- * @param type Тип кнопки. Определяет её цвет. Типы: [ButtonType]
- * @param buttonColor Цвет кнопки. Порядок: 0 - Обычная, 1 - Наведённая.
- * @param action Логика при нажатии на кнопку.
- */
 fun UiScope.button(
     text: String = "",
     textSize: Header = Header.H3,
@@ -218,14 +152,7 @@ fun UiScope.button(
         )
         .onClick { action() }
 }
-expect fun openUrl(url: String)
 
-/**
- * Контент, который будет скрыт, но можно развернуть и скрыть заново.
- * @param button Текст на кнопки. По умолчания - Spoiler.
- * @param hiddenVar Переменная, через которую контролируется состояние спойлера.
- * @param hiddenContent Контент внутри спойлера.
- */
 fun UiScope.spoiler(button: String = "Spoiler", hiddenVar: MutableStateValue<Boolean>, hiddenContent: UiScope.() -> Unit) {
     if(!hiddenVar.value)
         Box { modifier.align(AlignmentX.Center, AlignmentY.Center)
@@ -242,3 +169,5 @@ fun UiScope.spoiler(button: String = "Spoiler", hiddenVar: MutableStateValue<Boo
         }
     }
 }
+
+expect fun openUrl(url: String)

@@ -23,6 +23,7 @@ object WelcomePage : Composable {
     }
 
     private val sHide0 = mutableStateOf(false)
+    private var iRememberThat = false
 
     override fun UiScope.compose() {
         wow()
@@ -68,8 +69,6 @@ object WelcomePage : Composable {
     }
 
     private fun UiScope.wow() {
-        var iRememberThat = remember { false }
-
         if(!iRememberThat) return
 
         when {
