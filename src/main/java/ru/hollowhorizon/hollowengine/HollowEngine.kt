@@ -7,7 +7,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.minecraft.Util
 import org.apache.logging.log4j.LogManager
-import ru.hollowhorizon.hc.api.HollowMod
+import ru.hollowhorizon.hc.api.Init
 import ru.hollowhorizon.hc.client.kool.KoolManager
 import ru.hollowhorizon.hc.common.config.HollowConfig
 import ru.hollowhorizon.hc.common.config.hollowConfig
@@ -18,12 +18,12 @@ import ru.hollowhorizon.hollowengine.common.scripting.core.example.HollowScript
 import ru.hollowhorizon.hollowengine.common.scripting.core.setupScripting
 import ru.hollowhorizon.hollowengine.common.scripting.events.loadEvents
 //? if forge
-/*import ru.hollowhorizon.hollowengine.mixins.client.setupCamera*/
+/*import ru.hollowhorizon.hollowengine.client.render.setupCamera*/
 
 import ru.hollowhorizon.hollowengine.docs.OPEN_URL
 import ru.hollowhorizon.hollowengine.docs.loadResources
 
-@HollowMod
+@Init
 object HollowEngine {
     const val MODID = "hollowengine"
     val LOGGER = LogManager.getLogger()
