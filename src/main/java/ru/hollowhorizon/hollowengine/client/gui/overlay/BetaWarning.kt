@@ -42,7 +42,7 @@ object BetaWarning {
                 Button("Я понял") {
                     modifier.alignX(AlignmentX.Center).alignY(AlignmentY.Bottom)
                         .onClick {
-                            HollowEngine.config.beta    .notifiedIsNotStableBeta = true
+                            HollowEngine.config.beta.notifiedIsNotStableBeta = true
                             KoolManager.context.removeScene(this@apply)
                         }
                 }
