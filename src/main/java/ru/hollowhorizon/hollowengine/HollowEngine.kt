@@ -46,7 +46,7 @@ object HollowEngine {
         loadEvents()
 
         RenderSystem.recordRenderCall {
-            KoolManager.context.addScene(CompilationStatus.overlay)
+            //KoolManager.context.addScene(CompilationStatus.overlay)
             KoolManager.context.addScene(BetaWarning.overlay)
         }
 
