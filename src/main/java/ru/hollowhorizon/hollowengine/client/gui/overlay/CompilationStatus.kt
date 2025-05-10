@@ -7,6 +7,7 @@ import de.fabmax.kool.scene.Scene
 import de.fabmax.kool.util.Color
 import kotlinx.serialization.Serializable
 import net.minecraft.world.entity.player.Player
+import ru.hollowhorizon.hc.client.kool.KoolManager
 import ru.hollowhorizon.hc.common.utils.currentServer
 import ru.hollowhorizon.hc.common.coroutines.isServerLoaded
 import ru.hollowhorizon.hc.common.network.HollowPacketHandler
@@ -56,6 +57,8 @@ object CompilationStatus {
     fun clearStatus(file: String) {
         messages.remove(file)
         surface.triggerUpdate()
+
+        KoolManager.context.removeScene(this.overlay)
     }
 
     enum class Status(val text: String) {

@@ -6,6 +6,7 @@ import de.fabmax.kool.pipeline.ClearDepthDontCare
 import de.fabmax.kool.scene.Scene
 import de.fabmax.kool.util.Color
 import ru.hollowhorizon.hc.client.kool.KoolManager
+import ru.hollowhorizon.hc.common.config.HollowConfig
 import ru.hollowhorizon.hollowengine.HollowEngine
 import ru.hollowhorizon.hollowengine.client.gui.scripting.theme.IdeTheme
 
@@ -42,8 +43,10 @@ object BetaWarning {
                 Button("Я понял") {
                     modifier.alignX(AlignmentX.Center).alignY(AlignmentY.Bottom)
                         .onClick {
-                            HollowEngine.config.beta.notifiedIsNotStableBeta = true
                             KoolManager.context.removeScene(this@apply)
+
+                            HollowEngine.config.beta.notifiedIsNotStableBeta = true
+                            HollowEngine.config.save
                         }
                 }
             }
