@@ -57,8 +57,6 @@ object CompilationStatus {
     fun clearStatus(file: String) {
         messages.remove(file)
         surface.triggerUpdate()
-
-        KoolManager.context.removeScene(this.overlay)
     }
 
     enum class Status(val text: String) {
