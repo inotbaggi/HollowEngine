@@ -2,6 +2,7 @@ package ru.hollowhorizon.hollowengine
 
 import com.mojang.blaze3d.systems.RenderSystem
 import de.fabmax.kool.util.launchOnMainThread
+import de.fabmax.kool.scene.Scene
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -46,8 +47,8 @@ object HollowEngine {
         loadEvents()
 
         RenderSystem.recordRenderCall {
-            //KoolManager.context.addScene(CompilationStatus.overlay)
-            KoolManager.context.addScene(BetaWarning.overlay)
+            KoolManager.context.addScene(CompilationStatus.overlay)
+            //KoolManager.context.addScene(BetaWarning.overlay)
         }
 
         //? if forge {
