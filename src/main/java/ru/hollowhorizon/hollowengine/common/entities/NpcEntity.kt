@@ -29,8 +29,8 @@ import ru.hollowhorizon.hollowengine.common.npcs.navigation.NpcMoveControl
 import ru.hollowhorizon.hollowengine.common.npcs.navigation.NpcPathNavigation
 import ru.hollowhorizon.hollowengine.common.registry.ModEntities
 import ru.hollowhorizon.hollowengine.common.registry.ModItems
-import ru.hollowhorizon.hollowengine.ecs.ComponentRegistry
 import ru.hollowhorizon.hollowengine.ecs.npc.NpcComponent
+import ru.hollowhorizon.hollowengine.ecs.npc.NpcComponentsCapability
 
 class NpcEntity : PathfinderMob, IAnimated {
     constructor(level: Level) : super(ModEntities.NPC_ENTITY, level)
@@ -53,7 +53,9 @@ class NpcEntity : PathfinderMob, IAnimated {
         player
     }
 
-    private val components = ArrayList<NpcComponent>()
+    val components: MutableList<NpcComponent>
+        get() = this[NpcComponentsCapability::class].components
+            .onEach { it.npc = this@NpcEntity }
 
     init {
         setCanPickUpLoot(true)
@@ -70,13 +72,13 @@ class NpcEntity : PathfinderMob, IAnimated {
     override fun createNavigation(pLevel: Level) = NpcPathNavigation(pLevel, this)
 
     override fun mobInteract(pPlayer: Player, pHand: InteractionHand): InteractionResult {
+        if (pHand == InteractionHand.MAIN_HAND) {
+            components.forEach { it.onInteract(pPlayer, pHand) }
+        }
+
         if (pHand == InteractionHand.MAIN_HAND && level().isClientSide && pPlayer.mainHandItem.item != ModItems.NPC_TOOL) {
             //NPCMenuGui(this).open()
             return InteractionResult.SUCCESS
-        }
-
-        if (pHand == InteractionHand.MAIN_HAND) {
-            components.forEach { it.onInteract(pPlayer, pHand) }
         }
 
         return super.mobInteract(pPlayer, pHand)
@@ -102,6 +104,8 @@ class NpcEntity : PathfinderMob, IAnimated {
     }
 
     override fun customServerAiStep() {
+        components.forEach { it.tick() }
+
         val capability = this[NPCCapability::class]
 
         if (capability.currentTrade == -1) return
@@ -118,7 +122,6 @@ class NpcEntity : PathfinderMob, IAnimated {
             capability.tradeContainer.setItem(6, ItemStack.EMPTY)
         }
 
-        components.forEach { it.tick() }
     }
 
     override fun dropEquipment() {
@@ -173,11 +176,6 @@ class NpcEntity : PathfinderMob, IAnimated {
         super.save(pCompound)
         pCompound.putFloat("sizeX", entityData[sizeX])
         pCompound.putFloat("sizeY", entityData[sizeY])
-        pCompound.put("components", CompoundTag().apply {
-            components.forEach {
-                put(it.javaClass.name, CompoundTag().apply(it::save))
-            }
-        })
         return true
     }
 
@@ -187,12 +185,6 @@ class NpcEntity : PathfinderMob, IAnimated {
         entityData[sizeX] = pCompound.getFloat("sizeX")
         entityData[sizeY] = pCompound.getFloat("sizeY")
         components.clear()
-        pCompound.getCompound("components").apply {
-            allKeys.forEach {
-                val component = ComponentRegistry.NPC_COMPONENTS[Class.forName(it)] ?: error("Component not found: $it")
-                components += component(this@NpcEntity).apply { load(getCompound(it)) }
-            }
-        }
     }
 
     val pickupDistance get() = pickupReach
