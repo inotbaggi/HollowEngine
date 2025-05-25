@@ -24,8 +24,12 @@
 
 package ru.hollowhorizon.hollowengine.common.scripting.story.nodes.npcs
 
+import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.level.ChunkPos
+import net.minecraft.world.level.chunk.ChunkStatus
+import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraftforge.registries.ForgeRegistries
 import ru.hollowhorizon.hc.client.models.gltf.manager.AnimatedEntityCapability
 import ru.hollowhorizon.hc.client.utils.get
@@ -60,62 +64,57 @@ class NpcDelegate(
     }
 
     fun spawn() {
-        //if(entityUUID != null) return
-
         check(ResourceLocation.isValidResourceLocation(settings.model)) { "Invalid model path: ${settings.model}" }
 
         val dimension = manager.server.levelKeys().find { it.location() == settings.world.rl }
-            ?: throw IllegalStateException("Dimension ${settings.world} not found. Or not loaded!")
+            ?: throw IllegalStateException("Dimension ${settings.world} not found or not loaded!")
         val level = manager.server.getLevel(dimension)
-            ?: throw IllegalStateException("Dimension ${settings.world} not found. Or not loaded")
+            ?: throw IllegalStateException("Dimension ${settings.world} not found or not loaded!")
 
-        //val npcs = level[StoriesCapability::class].activeNpcs
+        val chunkPos = ChunkPos(BlockPos(settings.pos))
 
-//        npcs.entries.find { it.value == settings.name }?.key?.let {
-//            entityUUID = UUID.fromString(it)
-//            manager.scriptRequirements += {
-//                !npcs.containsKey(entityUUID.toString()) || property.isLoaded
-//            }
-//            return
-//        }
+        level.chunkSource
+            .getChunkFuture(chunkPos.x, chunkPos.z, ChunkStatus.FULL, true)
+            .thenAcceptAsync({ chunkAccess ->
+                val chunk = chunkAccess as? LevelChunk ?: return@thenAcceptAsync
 
-        val entity = NPCEntity(level).apply {
-            setPos(settings.pos.x, settings.pos.y, settings.pos.z)
+                val entity = NPCEntity(level).apply {
+                    setPos(settings.pos.x, settings.pos.y, settings.pos.z)
 
-            this[AnimatedEntityCapability::class].apply {
-                model = settings.model
-                animations.clear()
-                animations.putAll(settings.animations)
-                textures.clear()
-                textures.putAll(settings.textures)
-                transform = settings.transform
-                switchHeadRot = settings.switchHeadRot
-                subModels.clear()
-                subModels.putAll(settings.subModels)
-            }
-            moveTo(settings.pos.x, settings.pos.y, settings.pos.z, settings.rotation.x, settings.rotation.y)
+                    this[AnimatedEntityCapability::class].apply {
+                        model = settings.model
+                        animations.clear()
+                        animations.putAll(settings.animations)
+                        textures.clear()
+                        textures.putAll(settings.textures)
+                        transform = settings.transform
+                        switchHeadRot = settings.switchHeadRot
+                        subModels.clear()
+                        subModels.putAll(settings.subModels)
+                    }
 
-            settings.attributes.attributes.forEach { (name, value) ->
-                getAttribute(ForgeRegistries.ATTRIBUTES.getValue(name.rl) ?: return@forEach)?.baseValue =
-                    value.toDouble()
-            }
+                    moveTo(settings.pos.x, settings.pos.y, settings.pos.z, settings.rotation.x, settings.rotation.y)
 
-            setDimensions(settings.size)
-            refreshDimensions()
+                    settings.attributes.attributes.forEach { (name, value) ->
+                        getAttribute(ForgeRegistries.ATTRIBUTES.getValue(name.rl) ?: return@forEach)?.baseValue =
+                            value.toDouble()
+                    }
 
-            isCustomNameVisible = settings.showName && settings.name.isNotEmpty()
-            customName = settings.name.mcText
+                    setDimensions(settings.size)
+                    refreshDimensions()
 
-            level.addFreshEntity(this)
-            //npcs[this.uuid.toString()] = settings.name
-        }
+                    isCustomNameVisible = settings.showName && settings.name.isNotEmpty()
+                    customName = settings.name.mcText
 
-        entityUUID = entity.uuid
+                    level.addFreshEntity(this)
+                }
 
-//        manager.scriptRequirements += {
-//            !npcs.containsKey(entityUUID.toString()) || property.isLoaded
-//        }
+                entityUUID = entity.uuid
+
+            }, level.server) // обязательно выполнение на основном треде
     }
+
+
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): Safe<NPCEntity> {
         return this.property
